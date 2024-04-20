@@ -1,0 +1,10 @@
+twig:
+    file_name_pattern: '*.twig'
+    globals:
+        app_name: '%app_name%'
+        app_description: '%app_description%'
+        app_version: '%app_version%'
+
+when@test:
+    twig:
+        strict_variables: true
