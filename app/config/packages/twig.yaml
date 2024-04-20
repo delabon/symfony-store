@@ -4,6 +4,7 @@ twig:
         app_name: '%app_name%'
         app_description: '%app_description%'
         app_version: '%app_version%'
+    form_themes: ['bootstrap_5_layout.html.twig']
 
 when@test:
     twig:
