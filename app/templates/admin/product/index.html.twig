@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Products{% endblock %}
+
+{% block body %}
+    <h1>Products</h1>
+    <p>Manage your products.</p>
+    <p>
+        <a href="{{ path('admin_product_create') }}" class="btn btn-primary">Create new product</a>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th style="width: 150px">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name|title }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.createdAt|date('Y-m-d') }}</td>
+                    <td>
+                        <div class="d-flex">
+                            <a href="{{ path('admin_product_edit', {id: product.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                            <form action="{{ path('admin_product_delete', {id: product.id}) }}" method="post" class="ms-1">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
