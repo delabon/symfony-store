@@ -30,8 +30,15 @@
             </label>
         </div>
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
-        </button>
+        <p>
+            <button class="btn btn-lg btn-primary" type="submit">
+                Sign in
+            </button>
+        </p>
+
+        <p>
+            <a href="{{ path('app_register') }}">Register</a>
+            - <a href="{{ path('app_forgot_password_request') }}">Reset password</a>
+        </p>
     </form>
 {% endblock %}
