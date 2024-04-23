@@ -10,11 +10,7 @@
         {% endblock %}
     </head>
     <body>
-        {% if '/admin/' in app.request.uri %}
-            {% include 'views/admin-header.html.twig' %}
-        {% else %}
-            {% include 'views/header.html.twig' %}
-        {% endif %}
+        {% include 'views/header.html.twig' %}
 
         <div class="container">
             <div class="p-4 my-4 bg-white">
