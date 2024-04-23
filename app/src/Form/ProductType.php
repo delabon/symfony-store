@@ -46,9 +46,9 @@ class ProductType extends AbstractType
             ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $product = $event->getData();
                 $product->setUpdatedAt(new \DateTimeImmutable());
-                $product->setUser($this->security->getUser());
 
                 if ($product->getId() === null) {
+                    $product->setUser($this->security->getUser());
                     $product->setCreatedAt(new \DateTimeImmutable());
                 }
             })
