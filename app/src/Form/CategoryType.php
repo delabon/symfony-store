@@ -3,21 +3,19 @@
 namespace App\Form;
 
 use App\Entity\Category;
-use App\Entity\Product;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Event\PostSubmitEvent;
+use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class ProductType extends AbstractType
+class CategoryType extends AbstractType
 {
     public function __construct(
         private readonly FormListenerFactory $formListenerFactory
@@ -29,24 +27,14 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'empty_data' => '',
+                'empty_data' => ''
             ])
-            ->add('slug', textType::class, [
+            ->add('slug', TextType::class, [
                 'empty_data' => '',
                 'required' => false,
             ])
             ->add('description', TextareaType::class, [
-                'empty_data' => '',
-            ])
-            ->add('price', NumberType::class, [
-                'empty_data' => '',
-            ])
-            ->add('sale_price', NumberType::class, [
-                'empty_data' => '',
-            ])
-            ->add('category', EntityType::class, [
-                'class' => Category::class,
-                'choice_label' => 'name',
+                'empty_data' => ''
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Save',
@@ -60,7 +48,7 @@ class ProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Product::class,
+            'data_class' => Category::class,
         ]);
     }
 }
