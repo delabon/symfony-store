@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[UniqueEntity(fields: ['name'])]
+#[UniqueEntity(fields: ['slug'])]
 class Product
 {
     #[ORM\Id]
@@ -21,6 +22,11 @@ class Product
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
     private string $name = '';
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 3, max: 255)]
+    #[Assert\Regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', message: 'Only lowercase letters, numbers and hyphens are allowed.')]
+    private string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
@@ -52,7 +58,7 @@ class Product
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -64,7 +70,7 @@ class Product
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -132,6 +138,18 @@ class Product
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

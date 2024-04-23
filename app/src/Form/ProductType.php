@@ -13,10 +13,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProductType extends AbstractType
 {
-    public function __construct(private readonly Security $security)
+    public function __construct(private readonly Security $security, private readonly SluggerInterface $slugger)
     {
     }
 
@@ -25,6 +26,10 @@ class ProductType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'empty_data' => '',
+            ])
+            ->add('slug', textType::class, [
+                'empty_data' => '',
+                'required' => false,
             ])
             ->add('description', TextareaType::class, [
                 'empty_data' => '',
@@ -46,6 +51,15 @@ class ProductType extends AbstractType
                 if ($product->getId() === null) {
                     $product->setCreatedAt(new \DateTimeImmutable());
                 }
+            })
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                $product = $event->getData();
+
+                if (empty($product['slug'])) {
+                    $product['slug'] = $this->slugger->slug(strtolower($product['name']));
+                }
+
+                $event->setData($product);
             })
         ;
     }
