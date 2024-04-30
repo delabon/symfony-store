@@ -29,6 +29,9 @@ class UserController extends AbstractController
         $entityManager->flush();
         $this->addFlash('success', 'User has been banned.');
 
+        // Destroy the user's session if they are banned.
+
+
         return $this->redirectToRoute('admin_user_index');
     }
 
