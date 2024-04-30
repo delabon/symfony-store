@@ -13,13 +13,13 @@ class UserFixtures extends Fixture
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
-        #[Autowire('%app.domain%')]
+        #[Autowire('%app_domain%')]
         private readonly string $appDomain,
-        #[Autowire('%app.admin_email%')]
+        #[Autowire('%app_admin_email%')]
         private readonly string $adminEmail,
-        #[Autowire('%app.admin_password%')]
+        #[Autowire('%app_admin_password%')]
         private readonly string $adminPassword,
-        #[Autowire('%app.admin_username%')]
+        #[Autowire('%app_admin_username%')]
         private readonly string $adminUsername
     )
     {
