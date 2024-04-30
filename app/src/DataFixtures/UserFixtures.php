@@ -39,7 +39,7 @@ class UserFixtures extends Fixture
         $manager->persist($admin);
 
         // Add regular users
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             $user = new User();
             $user->setEmail("user{$i}@{$this->appDomain}");
             $user->setUsername("user{$i}");
