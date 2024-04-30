@@ -17,12 +17,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CategoryController extends AbstractController
 {
     #[Route('', name: 'index')]
-    public function index(CategoryRepository $categoryRepository): Response
+    public function index(Request $request, CategoryRepository $categoryRepository): Response
     {
-        $categories = $categoryRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = (int)$this->getParameter('app_admin_per_page');
+        $paginator = $categoryRepository->paginate($page, $limit);
 
         return $this->render('admin/category/index.html.twig', [
-            'categories' => $categories,
+            'categories' => $paginator,
+            'maxPages' => ceil($paginator->count() / $limit),
+            'page' => $page,
         ]);
     }
 
