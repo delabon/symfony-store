@@ -1,13 +1,17 @@
 ## CryptoStore
 
-### Add domain to /etc/hosts (host)
+Create products for your customers and accept crypto instead of real money.
+
+### To test this on your local machine, follow the instruction bellow
+
+#### Add domain to /etc/hosts (host)
 
 ```bash
 sudo vi /etc/hosts
 127.0.0.111  crypto-store.test
 ```
 
-### Install mkcert (host)
+#### Install mkcert (host)
 
 ```bash
 sudo apt install libnss3-tools
@@ -18,31 +22,10 @@ cd ssls/
 mkcert -install crypto-store.test
 ```
 
-### Up containers (host)
+#### Up containers (host)
 
 ```bash
 docker-compose up --build -d
 ```
 
-### Connect to container bash (host)
-
-```bash
-docker exec -it container_id bash
-```
-
-### Install symfony (php-container)
-
-```bash
-git config --global user.email "example@example.com"
-git config --global user.name "John Doe"
-symfony new . --version="6.2.*"
-symfony new . --version="6.2.*" --webapp
-```
-
-### npm install / watch / install package (host)
-
-```bash
-docker-compose run node-service npm install
-docker-compose run node-service npm i bootstrap --save-dev
-docker-compose run node-service npm run watch
-```
+***Now, open crypto-store.test in your browser***
