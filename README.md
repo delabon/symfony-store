@@ -33,8 +33,14 @@ docker-compose up --build -d
 Copy the content of .env file and paste it in .env.local and then, Add the following
 
 ```dotenv
-DATABASE_URL="mysql://root:root@127.0.0.1:3306/crypto_app?serverVersion=8.3.0&charset=utf8mb4"
+DATABASE_URL="mysql://root:root@mysql-service:3306/crypto_store?serverVersion=8.3.0&charset=utf8mb4"
 MAILER_DSN=smtp://mailpit:1025
+```
+
+#### Connect to the php container
+
+```bash
+docker exec -it php-container bash
 ```
 
 #### Composer
@@ -47,6 +53,21 @@ composer install
 
 ```bash
 php bin/console doctrine:migrations:migrate
+```
+
+#### Load fixtures
+
+```bash
+php bin/console doctrine:fixtures:load -n
+```
+
+#### Install node modules
+
+Open a new terminal and run the following command
+
+```bash
+docker-compose run node-service npm install
+docker-compose run node-service npm run build
 ```
 
 ***Now, open crypto-store.test in your browser***
