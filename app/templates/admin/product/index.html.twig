@@ -37,4 +37,7 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% include 'views/pagination.html.twig' with {'route': 'admin_product_index', 'maxPages': maxPages, 'page': page} %}
+
 {% endblock %}

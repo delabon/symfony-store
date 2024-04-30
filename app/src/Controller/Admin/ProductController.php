@@ -12,21 +12,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/admin', name: 'admin_product_')]
+#[Route('/admin/products', name: 'admin_product_')]
 #[IsGranted('ROLE_ADMIN')]
 class ProductController extends AbstractController
 {
-    #[Route('/products', name: 'index')]
-    public function index(ProductRepository $productRepository): Response
+    #[Route('', name: 'index')]
+    public function index(Request $request, ProductRepository $productRepository): Response
     {
-        $products = $productRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = (int)$this->getParameter('app_admin_per_page');
+        $paginator = $productRepository->paginate($page, $limit);
 
         return $this->render('admin/product/index.html.twig', [
-            'products' => $products,
+            'products' => $paginator,
+            'maxPages' => ceil($paginator->count() / $limit),
+            'page' => $page,
         ]);
     }
 
-    #[Route('/products/create', name: 'create')]
+    #[Route('/create', name: 'create')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $product = new Product();
@@ -46,7 +50,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/products/edit/{id<\d+>}', name: 'edit', methods: ['GET', 'POST'])]
+    #[Route('/edit/{id<\d+>}', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Product $product, Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProductType::class, $product);
@@ -65,7 +69,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/products/delete/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
+    #[Route('/delete/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
     public function delete(Product $product, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($product);

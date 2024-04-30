@@ -39,18 +39,6 @@
         </tbody>
     </table>
 
-    <p><strong>Total pages:</strong> {{ maxPages }} | <strong>Current page:</strong> {{ page }}</p>
-
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            {% if page > 1 %}
-                <li class="page-item"><a class="page-link" href="{{ url('admin_user_index', {'page': page - 1}) }}">Previous</a></li>
-            {% endif %}
-
-            {% if page < maxPages %}
-                <li class="page-item"><a class="page-link" href="{{ url('admin_user_index', {'page': page + 1}) }}">Next</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% include 'views/pagination.html.twig' with {'route': 'admin_user_index', 'maxPages': maxPages, 'page': page} %}
 
 {% endblock %}
