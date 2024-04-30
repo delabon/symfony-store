@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin{% endblock %}
+
+{% block body %}
+    <h1>Admin</h1>
+
+    <p>
+        Number of products: {{ productsCount }}
+    </p>
+
+    <p>
+        <a href="{{ path('admin_product_index') }}" class="btn btn-primary">Products</a>
+        <a href="{{ path('admin_product_create') }}" class="btn btn-primary">Create new product</a>
+    </p>
+
+    <p class="mt-5">
+        Number of categories: {{ categoriesCount }}
+    </p>
+
+    <p>
+        <a href="{{ path('admin_category_index') }}" class="btn btn-primary">Categories</a>
+        <a href="{{ path('admin_category_create') }}" class="btn btn-primary">Create new category</a>
+    </p>
+
+    <p class="mt-5">
+        // TODO: Add number of users and links to user index
+    </p>
+
+{% endblock %}
