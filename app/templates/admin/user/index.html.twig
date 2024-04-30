@@ -22,13 +22,15 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.createdAt|date('Y-m-d') }}</td>
-                    <td>{{ user.banned ? 'Banned' : 'Not banned' }}</td>
+                    <td>{{ user.banned ? 'Banned' : 'Active' }}</td>
                     <td>
                         <div class="d-flex">
-                            {% if user.banned %}
-                                <a href="{{ path('admin_user_unban', {id: user.id}) }}" class="btn btn-sm btn-secondary">UnBan</a>
-                            {% else %}
-                                <a href="{{ path('admin_user_ban', {id: user.id}) }}" class="btn btn-sm btn-danger">Ban</a>
+                            {% if not user.isAdmin %}
+                                {% if user.banned %}
+                                    <a href="{{ path('admin_user_unban', {id: user.id}) }}" class="btn btn-sm btn-secondary">UnBan</a>
+                                {% else %}
+                                    <a href="{{ path('admin_user_ban', {id: user.id}) }}" class="btn btn-sm btn-danger">Ban</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </td>
@@ -36,4 +38,19 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <p><strong>Total pages:</strong> {{ maxPages }} | <strong>Current page:</strong> {{ page }}</p>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item"><a class="page-link" href="{{ url('admin_user_index', {'page': page - 1}) }}">Previous</a></li>
+            {% endif %}
+
+            {% if page < maxPages %}
+                <li class="page-item"><a class="page-link" href="{{ url('admin_user_index', {'page': page + 1}) }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
 {% endblock %}

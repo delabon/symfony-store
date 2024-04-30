@@ -11,6 +11,7 @@ parameters:
     app_admin_email: '%env(APP_ADMIN_EMAIL)%'
     app_admin_username: '%env(APP_ADMIN_USERNAME)%'
     app_admin_password: '%env(APP_ADMIN_PASSWORD)%'
+    app_admin_per_page: '%env(APP_ADMIN_PER_PAGE)%'
 
 services:
     # default configuration for services in *this* file
