@@ -69,6 +69,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'User')]
     private Collection $categories;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isBanned = false;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -254,6 +257,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $category->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setBanned(bool $isBanned): static
+    {
+        $this->isBanned = $isBanned;
 
         return $this;
     }

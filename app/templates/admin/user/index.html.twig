@@ -22,11 +22,14 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.createdAt|date('Y-m-d') }}</td>
-                    <td>{{ user.status|title }}</td>
+                    <td>{{ user.banned ? 'Banned' : 'Not banned' }}</td>
                     <td>
                         <div class="d-flex">
-                            <a href="{{ path('admin_user_ban', {id: user.id}) }}" class="btn btn-sm btn-danger">Ban</a>
-                            <a href="{{ path('admin_user_unban', {id: user.id}) }}" class="btn btn-sm btn-secondary">UnBan</a>
+                            {% if user.banned %}
+                                <a href="{{ path('admin_user_unban', {id: user.id}) }}" class="btn btn-sm btn-secondary">UnBan</a>
+                            {% else %}
+                                <a href="{{ path('admin_user_ban', {id: user.id}) }}" class="btn btn-sm btn-danger">Ban</a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

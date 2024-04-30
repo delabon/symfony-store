@@ -2,17 +2,43 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/users', name: 'admin_user_')]
+#[IsGranted('ROLE_ADMIN')]
 class UserController extends AbstractController
 {
-    #[Route('/admin/users', name: 'app_admin_users')]
-    public function index(): Response
+    #[Route('', name: 'index')]
+    public function index(UserRepository $userRepository): Response
     {
         return $this->render('admin/user/index.html.twig', [
-            'users' => [],
+            'users' => $userRepository->findAll(),
         ]);
+    }
+
+    #[Route('/ban/{id<\d+>}', name: 'ban')]
+    public function ban(User $user, EntityManagerInterface $entityManager): Response
+    {
+        $user->setBanned(true);
+        $entityManager->flush();
+        $this->addFlash('success', 'User has been banned.');
+
+        return $this->redirectToRoute('admin_user_index');
+    }
+
+    #[Route('/unban/{id<\d+>}', name: 'unban')]
+    public function unban(User $user, EntityManagerInterface $entityManager): Response
+    {
+        $user->setBanned(false);
+        $entityManager->flush();
+        $this->addFlash('success', 'User has been unbanned.');
+
+        return $this->redirectToRoute('admin_user_index');
     }
 }
