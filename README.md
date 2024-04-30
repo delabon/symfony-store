@@ -28,4 +28,25 @@ mkcert -install crypto-store.test
 docker-compose up --build -d
 ```
 
+#### create .env.local inside the app directory
+
+Copy the content of .env file and paste it in .env.local and then, Add the following
+
+```dotenv
+DATABASE_URL="mysql://root:root@127.0.0.1:3306/crypto_app?serverVersion=8.3.0&charset=utf8mb4"
+MAILER_DSN=smtp://mailpit:1025
+```
+
+#### Composer
+
+```bash
+composer install
+```
+
+#### Migrate database
+
+```bash
+php bin/console doctrine:migrations:migrate
+```
+
 ***Now, open crypto-store.test in your browser***
