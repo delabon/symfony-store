@@ -70,4 +70,14 @@ docker-compose run node-service npm install
 docker-compose run node-service npm run build
 ```
 
-***Now, open crypto-store.test in your browser***
+#### Bowser
+
+Now, open https://crypto-store.test in your browser
+
+#### Mailpit
+
+To see the emails sent by the app, open http://localhost:8025/ in your browser
+
+#### PHPMyAdmin
+
+To see the database, open http://localhost:8080/ in your browser
