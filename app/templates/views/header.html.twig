@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-white app-main-header" data-bs-theme="light">
     <div class="container">
-        {% if '/admin/' in app.request.uri %}
+        {% if '/admin' in app.request.uri %}
             <a class="navbar-brand" href="/admin">Admin</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -8,16 +8,16 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Home</a>
+                        <a class="nav-link {{ '/admin/products' in app.request.uri ? 'active' : '' }}" href="{{ path('admin_product_index') }}">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('admin_product_index') }}">Products</a>
+                        <a class="nav-link {{ '/admin/categories' in app.request.uri ? 'active' : '' }}" href="{{ path('admin_category_index') }}">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('admin_category_index') }}">Categories</a>
+                        <a class="nav-link {{ '/admin/users' in app.request.uri ? 'active' : '' }}" href="{{ path('admin_user_index') }}">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('admin_user_index') }}">Users</a>
+                        <a class="nav-link" aria-current="page" href="{{ path('app_home') }}">Back to site</a>
                     </li>
                 </ul>
             </div>
@@ -40,6 +40,24 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contact</a>
                     </li>
+                    {% if app.user %}
+                        {% if app.user.isAdmin %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('admin_index') }}">admin</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_register') }}">Register</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search products..." aria-label="Search">
