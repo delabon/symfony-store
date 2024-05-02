@@ -16,6 +16,7 @@ class ThumbnailService
         private readonly FileRepository $fileRepository,
         private readonly ParameterBagInterface $parameterBag,
         private readonly BaseUrlService $baseUrlService,
+        private readonly ImageCroppingService $imageCroppingService,
         private string $uploadsDir = ''
     )
     {
@@ -45,18 +46,12 @@ class ThumbnailService
                 $this->uploadsDir,
                 $filename
             );
+            $sizes = $this->imageCroppingService->createSizes($filename, $this->uploadsDir);
+
+            return $this->fileRepository->saveFile($filename, $this->security->getUser(), $sizes);
         } catch (FileException $e) {
             throw new FileException('An error occurred while uploading the file: ' . $e->getMessage());
         }
-
-        $sizes = $this->createSizes($filename);
-
-        return $this->fileRepository->saveFile($filename, $this->security->getUser(), $sizes);
-    }
-
-    private function createSizes(string $filename): array
-    {
-        return [];
     }
 
     public function delete(?File $file): void
@@ -69,6 +64,14 @@ class ThumbnailService
 
         if (file_exists($path)) {
             unlink($path);
+        }
+
+        foreach ($file->getSizes() as $size) {
+            $path = $this->uploadsDir . $size['path'];
+
+            if (file_exists($path)) {
+                unlink($path);
+            }
         }
 
         $this->fileRepository->removeFile($file);

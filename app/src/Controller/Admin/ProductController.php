@@ -3,7 +3,6 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
-use App\Event\ProductThumbnailUploadedEvent;
 use App\Form\ProductType;
 use App\Repository\FileRepository;
 use App\Repository\ProductRepository;
@@ -11,7 +10,6 @@ use App\Service\ThumbnailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,7 +69,7 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush(); // needs to save the product's data first
-            $thumbnailService->delete($fileRepository->find($product->getThumbnailId()));
+            $thumbnailService->delete($fileRepository->find($product->getThumbnailId() ?: 0));
             $this->uploadThumbnail($form, $thumbnailService, $product);
             $this->addFlash('success', 'Your product has been updated.');
 
@@ -81,7 +79,7 @@ class ProductController extends AbstractController
         return $this->render('admin/product/edit.html.twig', [
             'form' => $form,
             'product' => $product,
-            'thumbnail' => $thumbnailService->getUrl($product->getThumbnailId()),
+            'thumbnail' => $thumbnailService->getUrl($product->getThumbnailId() ?: 0),
         ]);
     }
 
