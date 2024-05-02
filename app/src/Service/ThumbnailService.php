@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\File;
 use App\Repository\FileRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -56,5 +57,20 @@ class ThumbnailService
     private function createSizes(string $filename): array
     {
         return [];
+    }
+
+    public function delete(?File $file): void
+    {
+        if (!($file instanceof File)) {
+            return;
+        }
+
+        $path = $this->uploadsDir . $file->getName();
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        $this->fileRepository->removeFile($file);
     }
 }
