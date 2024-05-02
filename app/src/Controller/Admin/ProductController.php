@@ -5,8 +5,11 @@ namespace App\Controller\Admin;
 use App\Entity\Product;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
+use App\Service\ThumbnailService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,6 +19,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class ProductController extends AbstractController
 {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    )
+    {
+    }
+
     #[Route('', name: 'index')]
     public function index(Request $request, ProductRepository $productRepository): Response
     {
@@ -31,15 +40,16 @@ class ProductController extends AbstractController
     }
 
     #[Route('/create', name: 'create')]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, ThumbnailService $imageUploaderService): Response
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($form->getData());
-            $entityManager->flush();
+            $this->entityManager->persist($form->getData());
+            $this->entityManager->flush();
+            $this->uploadThumbnail($form, $imageUploaderService, $product);
             $this->addFlash('success', 'Your product has been added.');
 
             return $this->redirectToRoute('admin_product_index');
@@ -51,13 +61,14 @@ class ProductController extends AbstractController
     }
 
     #[Route('/edit/{id<\d+>}', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(Product $product, Request $request, ThumbnailService $imageUploaderService): Response
     {
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush(); // needs to save the product's data first
+            $this->uploadThumbnail($form, $imageUploaderService, $product);
             $this->addFlash('success', 'Your product has been updated.');
 
             return $this->redirectToRoute('admin_product_index');
@@ -66,16 +77,39 @@ class ProductController extends AbstractController
         return $this->render('admin/product/edit.html.twig', [
             'form' => $form,
             'product' => $product,
+            'thumbnail' => $imageUploaderService->getUrl($product->getThumbnailId()),
         ]);
     }
 
     #[Route('/delete/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
-    public function delete(Product $product, EntityManagerInterface $entityManager): Response
+    public function delete(Product $product): Response
     {
-        $entityManager->remove($product);
-        $entityManager->flush();
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
         $this->addFlash('success', 'Your product has been deleted.');
 
         return $this->redirectToRoute('admin_product_index');
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param ThumbnailService $imageUploaderService
+     * @param Product $product
+     * @return void
+     */
+    protected function uploadThumbnail(
+        FormInterface $form,
+        ThumbnailService $imageUploaderService,
+        Product $product
+    ): void {
+        if ($form->has('thumbnailFile') && $form->get('thumbnailFile')->getData()) {
+            try {
+                $thumbnailId = $imageUploaderService->upload($form->get('thumbnailFile')->getData());
+                $product->setThumbnailId($thumbnailId);
+                $this->entityManager->flush();
+            } catch (Exception $e) {
+                $this->addFlash('error', 'Could not upload the thumbnail.');
+            }
+        }
     }
 }

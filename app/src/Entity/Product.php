@@ -56,6 +56,9 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'Product')]
     private ?Category $category = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $thumbnailId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -165,6 +168,18 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getThumbnailId(): ?int
+    {
+        return $this->thumbnailId;
+    }
+
+    public function setThumbnailId(?int $thumbnailId): static
+    {
+        $this->thumbnailId = $thumbnailId;
 
         return $this;
     }
