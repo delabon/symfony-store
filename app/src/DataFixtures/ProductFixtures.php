@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
+use App\Enum\ProductStatusEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -17,11 +18,12 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $product->setSlug("product-{$i}");
             $product->setDescription("Description for product {$i}");
             $product->setPrice(mt_rand(1000, 10000) / 100);
-            $product->setSalePrice(mt_rand(1000, 10000) / 100);
+            $product->setSalePrice(mt_rand(1000, $product->getPrice()) / 100);
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setUpdatedAt(new \DateTimeImmutable());
             $product->setUser($this->getReference('user_' . $i));
             $product->setCategory($this->getReference('category_' . mt_rand(0, 4)));
+            $product->setStatus(ProductStatusEnum::toArray()[array_rand(ProductStatusEnum::toArray())]);
             $manager->persist($product);
         }
 

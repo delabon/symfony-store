@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]
-#[UniqueEntity(fields: ['path'])]
-#[ORM\UniqueConstraint(columns: ['path'])]
+#[UniqueEntity(fields: ['name'])]
+#[ORM\UniqueConstraint(columns: ['name'])]
 class File
 {
     #[ORM\Id]

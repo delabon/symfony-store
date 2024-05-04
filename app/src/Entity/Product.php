@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ProductStatusEnum;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -59,6 +60,10 @@ class Product
 
     #[ORM\Column(nullable: true)]
     private ?int $thumbnailId = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Choice(callback: [ProductStatusEnum::class, 'toArray'])]
+    private ProductStatusEnum $status = ProductStatusEnum::DRAFT;
 
     public function getId(): ?int
     {
@@ -181,6 +186,18 @@ class Product
     public function setThumbnailId(?int $thumbnailId): static
     {
         $this->thumbnailId = $thumbnailId;
+
+        return $this;
+    }
+
+    public function getStatus(): ProductStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(ProductStatusEnum $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
