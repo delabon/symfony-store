@@ -41,6 +41,7 @@ class Product
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\PositiveOrZero]
+    #[Assert\LessThanOrEqual(propertyPath: 'price')]
     private ?string $sale_price = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
