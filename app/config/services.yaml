@@ -8,6 +8,7 @@ parameters:
     app_name: '%env(APP_NAME)%'
     app_description: '%env(APP_DESCRIPTION)%'
     app_version: '%env(APP_VERSION)%'
+    app_support_email: '%env(APP_SUPPORT_EMAIL)%'
     app_admin_email: '%env(APP_ADMIN_EMAIL)%'
     app_admin_username: '%env(APP_ADMIN_USERNAME)%'
     app_admin_password: '%env(APP_ADMIN_PASSWORD)%'

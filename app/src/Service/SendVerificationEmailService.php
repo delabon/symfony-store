@@ -14,7 +14,7 @@ readonly class SendVerificationEmailService
     public function __construct(
         private EmailVerifier $emailVerifier,
         private Security $security,
-        #[Autowire("%app.from_email%")]
+        #[Autowire("%app_support_email%")]
         private string $supportEmail
     )
     {
