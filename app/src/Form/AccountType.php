@@ -6,10 +6,12 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AccountType extends AbstractType
 {
@@ -20,15 +22,22 @@ class AccountType extends AbstractType
             ->add('email', EmailType::class, [
                 'empty_data' => '',
             ])
-            ->add('passwordField', PasswordType::class, [
+            ->add('passwordMatch', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match.',
+                'options' => ['attr' => ['class' => 'password-field']],
+                'first_options'  => ['label' => 'New password'],
+                'second_options' => ['label' => 'Repeat new password'],
                 'mapped' => false,
                 'required' => false,
-                'label' => 'New password',
-            ])
-            ->add('passwordMatch', PasswordType::class, [
-                'mapped' => false,
-                'required' => false,
-                'label' => 'Re-enter password',
+                'constraints' => [
+                    new Length([
+                        'min' => 5,
+                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 4096,
+                    ]),
+                ],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Update',

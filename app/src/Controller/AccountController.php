@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -24,7 +25,7 @@ class AccountController extends AbstractController
     }
 
     #[Route('/account', name: 'app_account')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $oldEmail = $this->getUser()->getEmail();
         $form = $this->createForm(AccountType::class, $this->getUser());
@@ -33,6 +34,11 @@ class AccountController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $form->getData();
+            $newPassword = $form->get('passwordMatch')->getData();
+
+            if (!empty($newPassword)) {
+                $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+            }
 
             if ($user->getEmail() !== $oldEmail) {
                 $user->setVerified(false);
