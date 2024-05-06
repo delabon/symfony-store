@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Pages{% endblock %}
+
+{% block body %}
+    <h1>Pages</h1>
+    <p>Manage your pages.</p>
+    <p>
+        <a href="{{ path('admin_page_create') }}" class="btn btn-primary">Create new page</a>
+    </p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th style="width: 150px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in pages %}
+            <tr>
+                <td>{{ item.name|title }}</td>
+                <td>{{ item.createdAt|date('Y-m-d') }}</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{{ path('admin_page_edit', {id: item.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="{{ path('admin_page_delete', {id: item.id}) }}" method="post" class="ms-1">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-danger app-delete-confirm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% include 'views/pagination.html.twig' with {'route': 'admin_page_index', 'maxPages': maxPages, 'page': page} %}
+
+{% endblock %}
