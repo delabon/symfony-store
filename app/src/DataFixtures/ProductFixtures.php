@@ -18,7 +18,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $product->setSlug("product-{$i}");
             $product->setDescription("Description for product {$i}");
             $product->setPrice(mt_rand(1000, 10000) / 100);
-            $product->setSalePrice(mt_rand(1000, $product->getPrice()) / 100);
+            $product->setSalePrice($product->getPrice() - 0.1);
             $product->setCreatedAt(new \DateTimeImmutable());
             $product->setUpdatedAt(new \DateTimeImmutable());
             $product->setUser($this->getReference('user_' . $i));
