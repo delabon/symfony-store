@@ -3,15 +3,20 @@
 namespace App\EventListener;
 
 use App\Entity\User;
+use App\Service\LogoutUserService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\RouterInterface;
 
-final class LogoutBannedUserListener
+final readonly class LogoutBannedUserListener
 {
     public function __construct(
-        private readonly Security $security
+        private LogoutUserService $logoutUserService,
+        private Security $security,
+        private RouterInterface $router
     )
     {
     }
@@ -29,8 +34,9 @@ final class LogoutBannedUserListener
             return;
         }
 
-        $event->getRequest()->getSession()->invalidate();
-        $this->security->logout(false);
+        $this->logoutUserService->handle();
         $event->getRequest()->getSession()->getFlashBag()->add('warning', 'You are banned.');
+
+        $event->setResponse(new RedirectResponse($this->router->generate('app_login')));
     }
 }
