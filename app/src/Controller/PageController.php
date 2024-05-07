@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PageController extends AbstractController
 {
-    #[Route('/{slug<[a-z0-9-]+>}', name: 'app_page_show')]
+    #[Route('/{slug<[a-z0-9-]+>}', name: 'app_page_show', priority: -100)]
     public function index(Page $page): Response
     {
         return $this->render('page/show.html.twig', [
