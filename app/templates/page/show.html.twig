@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.name|title }} - {{ app_name }}{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <h1>{{ page.name|title }}</h1>
+
+    <p>{{ page.content|nl2br }}</p>
+{% endblock %}

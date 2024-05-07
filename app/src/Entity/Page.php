@@ -6,9 +6,14 @@ use App\Repository\PageRepository;
 use App\Validator\AllowedSlug;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
+#[UniqueEntity(fields: ['slug'])]
+#[UniqueEntity(fields: ['name'])]
+#[ORM\UniqueConstraint(columns: ['slug'])]
+#[ORM\UniqueConstraint(columns: ['name'])]
 class Page
 {
     #[ORM\Id]
