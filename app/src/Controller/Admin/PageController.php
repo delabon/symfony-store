@@ -20,7 +20,7 @@ class PageController extends AbstractController
     public function index(Request $request, PageRepository $pageRepository): Response
     {
         $page = $request->query->getInt('page', 1);
-        $limit = $this->getParameter('app_admin_per_page');
+        $limit = (int)$this->getParameter('app_admin_per_page');
         $paginator = $pageRepository->paginate($page, $limit);
 
         return $this->render('admin/page/index.html.twig', [
