@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Repository\CategoryRepository;
+use App\Repository\PageRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,13 +18,15 @@ class AdminController extends AbstractController
     public function index(
         ProductRepository $productRepository,
         CategoryRepository $categoryRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        PageRepository $pageRepository
     ): Response
     {
         return $this->render('admin/index.html.twig', [
             'productsCount' => $productRepository->count(),
             'categoriesCount' => $categoryRepository->count(),
             'usersCount' => $userRepository->count(),
+            'pagesCount' => $pageRepository->count(),
         ]);
     }
 }
