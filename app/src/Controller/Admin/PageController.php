@@ -17,12 +17,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PageController extends AbstractController
 {
     #[Route('', name: 'index')]
-    public function index(PageRepository $pageRepository): Response
+    public function index(Request $request, PageRepository $pageRepository): Response
     {
+        $page = $request->query->getInt('page', 1);
+        $limit = $this->getParameter('app_admin_per_page');
+        $paginator = $pageRepository->paginate($page, $limit);
+
         return $this->render('admin/page/index.html.twig', [
-            'pages' => $pageRepository->findAll(),
-            'maxPages' => 1,
-            'page' => 1,
+            'pages' => $paginator,
+            'maxPages' => ceil($paginator->count() / $limit),
+            'page' => $page,
         ]);
     }
 
