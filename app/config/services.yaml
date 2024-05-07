@@ -17,6 +17,9 @@ parameters:
     app_uploads_dir: '%env(APP_UPLOADS_DIR)%'
     app_image_sizes: '%env(APP_IMAGE_SIZES)%'
 
+imports:
+    - { resource: 'disallowed_slugs.yaml' }
+
 services:
     # default configuration for services in *this* file
     _defaults:

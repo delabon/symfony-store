@@ -1,0 +1,9 @@
+parameters:
+  disallowed_slugs:
+    - 'admin'
+    - 'login'
+    - 'logout'
+    - 'register'
+    - 'reset-password'
+    - 'account'
+    - 'contact'

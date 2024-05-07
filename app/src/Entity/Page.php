@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PageRepository;
+use App\Validator\AllowedSlug;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -24,6 +25,7 @@ class Page
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
     #[Assert\Regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', message: 'The slug can only contain lowercase alphanumeric characters and hyphens.')]
+    #[AllowedSlug]
     private string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
