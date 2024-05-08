@@ -14,6 +14,7 @@
             <tr>
                 <th>Name</th>
                 <th>Price</th>
+                <th>Status</th>
                 <th>Date</th>
                 <th style="width: 150px">Actions</th>
             </tr>
@@ -23,6 +24,7 @@
                 <tr>
                     <td>{{ product.name|title }}</td>
                     <td>{{ product.price }}</td>
+                    <td>{{ product.status.value }}</td>
                     <td>{{ product.createdAt|date('Y-m-d') }}</td>
                     <td>
                         <div class="d-flex">
