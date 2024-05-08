@@ -55,7 +55,7 @@ class Product
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Product')]
+    #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
     #[ORM\Column(nullable: true)]
