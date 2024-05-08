@@ -69,8 +69,12 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush(); // needs to save the product's data first
-            $thumbnailService->delete($fileRepository->find($product->getThumbnailId() ?: 0));
-            $this->uploadThumbnail($form, $thumbnailService, $product);
+
+            if ($form->has('thumbnailFile') && $form->get('thumbnailFile')->getData()) {
+                $thumbnailService->delete($fileRepository->find($product->getThumbnailId() ?: 0));
+                $this->uploadThumbnail($form, $thumbnailService, $product);
+            }
+
             $this->addFlash('success', 'Your product has been updated.');
 
             return $this->redirectToRoute('admin_product_index');
