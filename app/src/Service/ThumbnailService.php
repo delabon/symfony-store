@@ -23,7 +23,7 @@ class ThumbnailService
         $this->uploadsDir = $this->parameterBag->get('kernel.project_dir') . '/' . trim($this->parameterBag->get('app_uploads_dir'), '/') . '/';
     }
 
-    public function getUrl(int $id): ?string
+    public function getUrl(int $id, ?int $width = null, ?int $height = null): ?string
     {
         $file = $this->fileRepository->find($id);
 
@@ -31,7 +31,18 @@ class ThumbnailService
             return null;
         }
 
-        return $this->baseUrlService->getBaseUrl() . '/' . explode('/public/', $this->uploadsDir)[1] . $file->getName();
+        $url = $this->baseUrlService->getBaseUrl() . '/' . explode('/public/', $this->uploadsDir)[1] . $file->getName();
+
+        if (!(is_null($width) && is_null($height))) {
+            foreach ($file->getSizes() as $size) {
+                if ($size['width'] === $width && $size['height'] === $height) {
+                    $url = $this->baseUrlService->getBaseUrl() . '/' . explode('/public/', $this->uploadsDir)[1] . $size['path'];
+                    break;
+                }
+            }
+        }
+
+        return $url;
     }
 
     /**
