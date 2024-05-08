@@ -43,7 +43,7 @@ class Category
      * @var Collection<int, Product>
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
-    private Collection $Product;
+    private Collection $products;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -53,7 +53,7 @@ class Category
 
     public function __construct()
     {
-        $this->Product = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -112,15 +112,15 @@ class Category
     /**
      * @return Collection<int, Product>
      */
-    public function getProduct(): Collection
+    public function getProducts(): Collection
     {
-        return $this->Product;
+        return $this->products;
     }
 
     public function addProduct(Product $product): static
     {
-        if (!$this->Product->contains($product)) {
-            $this->Product->add($product);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
             $product->setCategory($this);
         }
 
@@ -129,7 +129,7 @@ class Category
 
     public function removeProduct(Product $product): static
     {
-        if ($this->Product->removeElement($product)) {
+        if ($this->products->removeElement($product)) {
             // set the owning side to null (unless already changed)
             if ($product->getCategory() === $this) {
                 $product->setCategory(null);

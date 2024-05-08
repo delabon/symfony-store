@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -26,6 +27,20 @@ class ProductRepository extends ServiceEntityRepository
     {
         return new Paginator(
             $this->createQueryBuilder('p')
+                ->orderBy('p.id', 'DESC')
+                ->setFirstResult(($page - 1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery(),
+            fetchJoinCollection: false
+        );
+    }
+
+    public function paginateByCategory(Category $category, int $page, int $limit): Paginator
+    {
+        return new Paginator(
+            $this->createQueryBuilder('p')
+                ->innerJoin('p.category', 'c', 'WITH', 'c.id = :category')
+                ->setParameter('category', $category->getId())
                 ->orderBy('p.id', 'DESC')
                 ->setFirstResult(($page - 1) * $limit)
                 ->setMaxResults($limit)

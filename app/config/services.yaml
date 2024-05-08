@@ -13,6 +13,9 @@ parameters:
     app_admin_username: '%env(APP_ADMIN_USERNAME)%'
     app_admin_password: '%env(APP_ADMIN_PASSWORD)%'
     app_admin_per_page: '%env(APP_ADMIN_PER_PAGE)%'
+    app_per_page: '%env(APP_PER_PAGE)%'
+    app_currency: '%env(APP_CURRENCY)%'
+    app_currency_symbol: '%env(APP_CURRENCY_SYMBOL)%'
     # Do not include the project directory in the path
     app_uploads_dir: '%env(APP_UPLOADS_DIR)%'
     app_image_sizes:

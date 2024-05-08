@@ -4,6 +4,8 @@ twig:
         app_name: '%app_name%'
         app_description: '%app_description%'
         app_version: '%app_version%'
+        app_currency: '%app_currency%'
+        app_currency_symbol: '%app_currency_symbol%'
     form_themes: ['bootstrap_5_layout.html.twig']
 
 when@test:
