@@ -15,7 +15,10 @@ parameters:
     app_admin_per_page: '%env(APP_ADMIN_PER_PAGE)%'
     # Do not include the project directory in the path
     app_uploads_dir: '%env(APP_UPLOADS_DIR)%'
-    app_image_sizes: '%env(APP_IMAGE_SIZES)%'
+    app_image_sizes:
+        - [300, 300]
+        - [500, 500]
+        - [1000, 1000]
 
 imports:
     - { resource: 'disallowed_slugs.yaml' }

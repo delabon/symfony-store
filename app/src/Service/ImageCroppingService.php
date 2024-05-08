@@ -13,7 +13,7 @@ class ImageCroppingService
 {
     public function __construct(
         #[Autowire('%app_image_sizes%')]
-        private string|array $sizes,
+        private array $sizes,
     )
     {
         $this->prepareSizes();
@@ -69,16 +69,15 @@ class ImageCroppingService
     private function prepareSizes(): void
     {
         $this->sizes = array_map(function ($size) {
-            $size = trim(strtolower($size));
 
-            if (!preg_match('/^\d+x\d+$/', $size)) {
+            if (empty($size) || empty($size[0]) || empty($size[1]) || !is_int($size[0]) || !is_int($size[1])) {
                 throw new InvalidArgumentException('Invalid size format: ' . $size);
             }
 
             return [
-                'width' => (int)explode('x', $size)[0],
-                'height' => (int)explode('x', $size)[1]
+                'width' => $size[0],
+                'height' => $size[1]
             ];
-        }, explode(',', $this->sizes));
+        }, $this->sizes);
     }
 }
