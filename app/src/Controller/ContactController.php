@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\DTO\ContactDTO;
+use App\DTO\ContactDTO;
 use App\Form\ContactType;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
