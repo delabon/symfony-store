@@ -8,6 +8,10 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('/assets/dist/app.min.css') }}">
         {% endblock %}
+
+        <script>
+            const cartCsrfToken = "{{ csrf_token('cart_csrf_protection') }}";
+        </script>
     </head>
     <body>
         {% include 'views/header.html.twig' %}

@@ -8,7 +8,8 @@ window.addEventListener('load', () => {
     fetch('/cart', {
         method: 'GET',
         headers: {
-            'Content-Type': 'text/html'
+            'Content-Type': 'text/html',
+            'X-CSRF-TOKEN': cartCsrfToken
         }
     }).then(function(response) {
         response.text().then(function(data) {
@@ -36,7 +37,8 @@ document.querySelectorAll('.btn-add-to-cart').forEach((button) => {
         fetch('/cart/add/' + productId, {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/html'
+                'Content-Type': 'text/html',
+                'X-CSRF-TOKEN': cartCsrfToken
             }
         }).then(function(response) {
             response.text().then(function(data) {
@@ -68,7 +70,8 @@ document.addEventListener('click', function(event) {
         fetch('/cart/remove/' + productId, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'text/html'
+                'Content-Type': 'text/html',
+                'X-CSRF-TOKEN': cartCsrfToken
             },
         }).then(function(response) {
             response.text().then(function(data) {
@@ -98,17 +101,17 @@ document.addEventListener('input', function(event) {
         fetch('/cart/update/' + productId + '/' + quantity, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'text/html'
+                'Content-Type': 'text/html',
+                'X-CSRF-TOKEN': cartCsrfToken
             },
         }).then(function(response) {
-            if (!response.ok) {
-                notify('error', 'Quantity must be a positive number', 'popup-cart');
-                return;
-            }
-
             response.text().then(function(data) {
-                document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
-                notify('success', 'Quantity has been updated', 'popup-cart');
+                if (!response.ok) {
+                    notify('error', data, 'popup-cart');
+                } else {
+                    document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
+                    notify('success', 'Quantity has been updated', 'popup-cart');
+                }
             });
         }).catch(function(error) {
             console.log(error);
