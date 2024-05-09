@@ -1,0 +1,23 @@
+{% if cart.items is empty %}
+    <div class="dropdown-item">
+        <strong>Cart is empty</strong>
+    </div>
+{% else %}
+    <div class="dropdown-item">
+        <strong>Cart</strong>
+    </div>
+    {% for item in cart.items %}
+        <div class="dropdown-item">
+            {{ item.product.name }} - Quantity:
+            <p>
+                <input type="number" min="1" value="{{ item.quantity }}" style="width: 50px;" data-id="{{ item.product.id }}" class="input-quantity">
+                <button class="btn btn-danger btn-sm btn-remove-from-cart" style="margin-left: 10px;" data-id="{{ item.product.id }}">Remove</button>
+            </p>
+        </div>
+    {% endfor %}
+    <div class="dropdown-divider"></div>
+    <div class="dropdown-item">
+        <strong>Total: {{ app_currency_symbol }}{{ cart.total }}</strong>
+        <a href="#" class="btn btn-success">Checkout</a>
+    </div>
+{% endif %}

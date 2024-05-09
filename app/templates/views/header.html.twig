@@ -57,6 +57,12 @@
                             <a class="nav-link" href="{{ path('app_register') }}">Register</a>
                         </li>
                     {% endif %}
+                    <li class="nav-item dropdown nav-item-cart">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cart
+                        </a>
+                        <div class="dropdown-menu"></div>
+                    </li>
                 </ul>
                 <form class="d-flex" role="search" action="{{ path('app_home') }}" method="get">
                     <input class="form-control me-2" type="search" name="s" placeholder="Search products..." aria-label="Search" value="{{ app.request.query.get('s') }}">
