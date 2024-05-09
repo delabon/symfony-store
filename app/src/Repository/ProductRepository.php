@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Enum\ProductStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,54 +25,55 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    private function prepareBasicPaginationQuery(int $page, int $limit): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+    }
     public function paginate(int $page, int $limit): Paginator
     {
         return new Paginator(
-            $this->createQueryBuilder('p')
-                ->orderBy('p.id', 'DESC')
-                ->setFirstResult(($page - 1) * $limit)
-                ->setMaxResults($limit)
-                ->getQuery(),
+            $this->prepareBasicPaginationQuery($page, $limit)->getQuery(),
             fetchJoinCollection: false
         );
     }
 
-    public function paginateByCategory(Category $category, int $page, int $limit): Paginator
+    public function paginatePublished(int $page, int $limit): Paginator
     {
         return new Paginator(
-            $this->createQueryBuilder('p')
-                ->innerJoin('p.category', 'c', 'WITH', 'c.id = :category')
-                ->setParameter('category', $category->getId())
-                ->orderBy('p.id', 'DESC')
-                ->setFirstResult(($page - 1) * $limit)
-                ->setMaxResults($limit)
+            $this->prepareBasicPaginationQuery($page, $limit)
+                ->where('p.status = :status')
+                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
                 ->getQuery(),
             fetchJoinCollection: false
         );
     }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function paginatePublishedByCategory(Category $category, int $page, int $limit): Paginator
+    {
+        return new Paginator(
+            $this->prepareBasicPaginationQuery($page, $limit)
+                ->innerJoin('p.category', 'c', 'WITH', 'c.id = :category')
+                ->setParameter('category', $category->getId())
+                ->where('p.status = :status')
+                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->getQuery(),
+            fetchJoinCollection: false
+        );
+    }
 
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function paginatePublishedBySearch(string $search, int $page, int $limit): Paginator
+    {
+        return new Paginator(
+            $this->prepareBasicPaginationQuery($page, $limit)
+                ->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%')
+                ->andWhere('p.status = :status')
+                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->getQuery(),
+            fetchJoinCollection: false
+        );
+    }
 }

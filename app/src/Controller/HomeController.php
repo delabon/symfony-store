@@ -22,18 +22,23 @@ class HomeController extends AbstractController
     {
         $page = $request->query->getInt('page', 1);
         $limit = (int)$this->getParameter('app_per_page');
+        $search = $request->query->get('s');
         $categorySlug = $request->query->get('category');
         $category = null;
         $thumbnails = [];
 
-        if ($categorySlug) {
-            $category = $categoryRepository->findOneBy(['slug' => $categorySlug]);
-        }
-
-        if ($category) {
-            $paginator = $productRepository->paginateByCategory($category, $page, $limit);
+        if (!empty($search)) {
+            $paginator = $productRepository->paginatePublishedBySearch($search, $page, $limit);
         } else {
-            $paginator = $productRepository->paginate($page, $limit);
+            if ($categorySlug) {
+                $category = $categoryRepository->findOneBy(['slug' => $categorySlug]);
+            }
+
+            if ($category) {
+                $paginator = $productRepository->paginatePublishedByCategory($category, $page, $limit);
+            } else {
+                $paginator = $productRepository->paginatePublished($page, $limit);
+            }
         }
 
         foreach ($paginator as $product) {
