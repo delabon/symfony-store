@@ -9,15 +9,21 @@ use InvalidArgumentException;
 use OutOfBoundsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 #[Route('/cart', name: 'app_cart_')]
 class CartController extends AbstractController
 {
+    public function __construct(
+        private readonly CartService $cartService
+    )
+    {
+    }
+
     #[Route('/', name: 'index')]
-    public function index(CartService $cartService, Request $request): Response
+    public function index(Request $request): Response
     {
         $csrfToken = $request->headers->get('X-CSRF-Token');
 
@@ -26,12 +32,12 @@ class CartController extends AbstractController
         }
 
         return $this->render('cart/cart.html.twig', [
-            'cart' => $cartService->get(),
+            'cart' => $this->cartService->get(),
         ]);
     }
 
     #[Route('/add/{id<\d+>}', name: 'add', methods: ['POST'])]
-    public function add(Product $product, CartService $cartService, Request $request): Response
+    public function add(Product $product, Request $request): Response
     {
         $csrfToken = $request->headers->get('X-CSRF-Token');
 
@@ -40,11 +46,11 @@ class CartController extends AbstractController
         }
 
         try {
-            $cartService->add($product);
+            $this->cartService->add($product);
 
             return $this->render('cart/cart.html.twig', [
                 'product' => $product,
-                'cart' => $cartService->get(),
+                'cart' => $this->cartService->get(),
             ]);
         } catch (InvalidArgumentException $e) {
             return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
@@ -56,7 +62,7 @@ class CartController extends AbstractController
     }
 
     #[Route('/remove/{id<\d+>}', name: 'remove', methods: ['DELETE'])]
-    public function remove(Product $product, CartService $cartService, Request $request): Response
+    public function remove(Product $product, Request $request): Response
     {
         $csrfToken = $request->headers->get('X-CSRF-Token');
 
@@ -65,11 +71,11 @@ class CartController extends AbstractController
         }
 
         try {
-            $cartService->remove($product);
+            $this->cartService->remove($product);
 
             return $this->render('cart/cart.html.twig', [
                 'product' => $product,
-                'cart' => $cartService->get(),
+                'cart' => $this->cartService->get(),
             ]);
         } catch (InvalidArgumentException $e) {
             return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
@@ -81,7 +87,7 @@ class CartController extends AbstractController
     }
 
     #[Route('/update/{id<\d+>}/{quantity<\d+>}', name: 'update_quantity', methods: ['PATCH'])]
-    public function quantity(Product $product, int $quantity, CartService $cartService, Request $request): Response
+    public function quantity(Product $product, int $quantity, Request $request): Response
     {
         $csrfToken = $request->headers->get('X-CSRF-Token');
 
@@ -90,11 +96,11 @@ class CartController extends AbstractController
         }
 
         try {
-            $cartService->quantity($product, $quantity);
+            $this->cartService->quantity($product, $quantity);
 
             return $this->render('cart/cart.html.twig', [
                 'product' => $product,
-                'cart' => $cartService->get(),
+                'cart' => $this->cartService->get(),
             ]);
         } catch (InvalidArgumentException $e) {
             return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
