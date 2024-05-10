@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CartRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use OutOfBoundsException;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
 class Cart
@@ -76,6 +77,39 @@ class Cart
     public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function addItem(int $itemId): self
+    {
+        if (!array_key_exists($itemId, $this->items)) {
+            $this->items[$itemId] = 0;
+        }
+
+        $this->items[$itemId]++;
+
+        return $this;
+    }
+
+    public function removeItem(int $itemId): self
+    {
+        if (!array_key_exists($itemId, $this->items)) {
+            throw new OutOfBoundsException('Item not found in cart');
+        }
+
+        unset($this->items[$itemId]);
+
+        return $this;
+    }
+
+    public function updateItemQuantity(int $itemId, int $quantity): self
+    {
+        if (!array_key_exists($itemId, $this->items)) {
+            throw new OutOfBoundsException('Item not found in cart');
+        }
+
+        $this->items[$itemId] = $quantity;
 
         return $this;
     }

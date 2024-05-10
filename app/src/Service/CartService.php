@@ -59,14 +59,7 @@ class CartService
         }
 
         $cart->setUpdatedAt(new DateTimeImmutable());
-        $items = $cart->getItems();
-
-        if (!array_key_exists($product->getId(), $items)) {
-            $items[$product->getId()] = 0;
-        }
-
-        $items[$product->getId()]++;
-        $cart->setItems($items);
+        $cart->addItem($product->getId());
         $this->cartRepository->save($cart);
     }
 
@@ -151,15 +144,7 @@ class CartService
             throw new OutOfBoundsException('Cart not found');
         }
 
-        $items = $cart->getItems();
-
-        if (!array_key_exists($product->getId(), $items)) {
-            throw new OutOfBoundsException('Product not in cart');
-        }
-
-        unset($items[$product->getId()]);
-
-        $cart->setItems($items);
+        $cart->removeItem($product->getId());
         $cart->setUpdatedAt(new DateTimeImmutable());
         $this->cartRepository->save($cart);
     }
@@ -199,19 +184,12 @@ class CartService
             throw new OutOfBoundsException('Cart not found');
         }
 
-        $items = $cart->getItems();
-
-        if (!array_key_exists($product->getId(), $items)) {
-            throw new OutOfBoundsException('Product not in cart');
-        }
-
-        $items[$product->getId()] = $quantity;
-        $cart->setItems($items);
+        $cart->updateItemQuantity($product->getId(), $quantity);
         $cart->setUpdatedAt(new DateTimeImmutable());
         $this->cartRepository->save($cart);
     }
 
-    private function UpdateSessionQuantity(Product $product, int $quantity)
+    private function UpdateSessionQuantity(Product $product, int $quantity): void
     {
         if ($quantity < 1) {
             throw new InvalidArgumentException('Quantity must be at least 1');
