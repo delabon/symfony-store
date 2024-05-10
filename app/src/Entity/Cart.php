@@ -113,4 +113,15 @@ class Cart
 
         return $this;
     }
+
+    public function mergeItems(array $newItems): self
+    {
+        foreach ($newItems as $itemId => $quantity) {
+            if (!array_key_exists($itemId, $this->items)) {
+                $this->items[$itemId] = $quantity;
+            }
+        }
+
+        return $this;
+    }
 }
