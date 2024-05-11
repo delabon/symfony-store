@@ -46,6 +46,7 @@ class ProductRepository extends ServiceEntityRepository
             $this->prepareBasicPaginationQuery($page, $limit)
                 ->where('p.status = :status')
                 ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->andWhere('p.quantity != 0')
                 ->getQuery(),
             fetchJoinCollection: false
         );
@@ -59,6 +60,7 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('category', $category->getId())
                 ->where('p.status = :status')
                 ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->andWhere('p.quantity != 0')
                 ->getQuery(),
             fetchJoinCollection: false
         );
@@ -72,6 +74,7 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('search', '%' . $search . '%')
                 ->andWhere('p.status = :status')
                 ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->andWhere('p.quantity != 0')
                 ->getQuery(),
             fetchJoinCollection: false
         );

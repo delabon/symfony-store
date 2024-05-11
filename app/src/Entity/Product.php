@@ -65,7 +65,7 @@ class Product
     #[Assert\Choice(callback: [ProductStatusEnum::class, 'toArray'])]
     private ProductStatusEnum $status = ProductStatusEnum::DRAFT;
 
-    #[ORM\Column]
+    #[ORM\Column(options: ['default' => 0])]
     #[Assert\NotBlank]
     #[Assert\GreaterThanOrEqual(-1)]
     private int $quantity = 0;
