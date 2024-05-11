@@ -150,7 +150,7 @@ class CartService
                 continue;
             }
 
-            if ($cartItems[$product->getId()] > $product->getQuantity()) {
+            if ($product->getQuantity() !== -1 && $cartItems[$product->getId()] > $product->getQuantity()) {
                 continue;
             }
 
