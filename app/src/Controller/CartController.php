@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Exception\ProductOutOfStockException;
 use App\Service\CartService;
 use Exception;
 use InvalidArgumentException;
+use LogicException;
 use OutOfBoundsException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,13 +47,13 @@ class CartController extends AbstractController
         }
 
         try {
-            $this->cartService->add($product);
+            $this->cartService->add($product->getId());
 
             return $this->render('cart/cart.html.twig', [
                 'product' => $product,
                 'cart' => $this->cartService->get(),
             ]);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|ProductOutOfStockException|LogicException $e) {
             return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
         } catch (OutOfBoundsException $e) {
             return new Response($e->getMessage(), Response::HTTP_NOT_FOUND);
@@ -101,7 +103,7 @@ class CartController extends AbstractController
                 'product' => $product,
                 'cart' => $this->cartService->get(),
             ]);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|LogicException $e) {
             return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
         } catch (OutOfBoundsException $e) {
             return new Response($e->getMessage(), Response::HTTP_NOT_FOUND);

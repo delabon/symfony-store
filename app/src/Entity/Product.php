@@ -65,6 +65,11 @@ class Product
     #[Assert\Choice(callback: [ProductStatusEnum::class, 'toArray'])]
     private ProductStatusEnum $status = ProductStatusEnum::DRAFT;
 
+    #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\GreaterThanOrEqual(-1)]
+    private int $quantity = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -198,6 +203,18 @@ class Product
     public function setStatus(ProductStatusEnum $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): static
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }

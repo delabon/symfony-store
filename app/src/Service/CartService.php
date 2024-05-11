@@ -5,11 +5,14 @@ namespace App\Service;
 use App\Entity\Cart;
 use App\Entity\Product;
 use App\Entity\User;
+use App\Enum\ProductStatusEnum;
+use App\Exception\ProductOutOfStockException;
 use App\Repository\CartRepository;
 use App\Repository\ProductRepository;
 use DateTimeImmutable;
 use Exception;
 use InvalidArgumentException;
+use LogicException;
 use OutOfBoundsException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -28,14 +31,24 @@ class CartService
     /**
      * @throws Exception
      */
-    public function add(Product $product): void
+    public function add(int $productId): void
     {
-        if (!$product->getId()) {
-            throw new InvalidArgumentException('Product must have an ID');
+        if (!$productId) {
+            throw new InvalidArgumentException('Product must have a positive ID');
         }
 
-        if (!$this->productRepository->find($product->getId())) {
+        $product = $this->productRepository->find($productId);
+
+        if (!$product instanceof Product) {
             throw new OutOfBoundsException('Product not found');
+        }
+
+        if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
+            throw new LogicException('Product is not active');
+        }
+
+        if ($product->getQuantity() === 0) {
+            throw new ProductOutOfStockException();
         }
 
         $user = $this->security->getUser();
@@ -47,6 +60,9 @@ class CartService
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function addToDb(Product $product, User $user): void
     {
         $cart = $user->getCart();
@@ -58,6 +74,7 @@ class CartService
             $cart->setCreatedAt(new DateTimeImmutable());
         }
 
+        $this->validateQuantityBeforeAdding($product, $cart->getItems()[$product->getId()] ?? 0);
         $cart->setUpdatedAt(new DateTimeImmutable());
         $cart->addItem($product->getId());
         $this->cartRepository->save($cart);
@@ -71,8 +88,25 @@ class CartService
             $cart[$product->getId()] = 0;
         }
 
+        $this->validateQuantityBeforeAdding($product, $cart[$product->getId()]);
         $cart[$product->getId()]++;
         $this->requestStack->getSession()->set('cart', $cart);
+    }
+
+    /**
+     * @param Product $product
+     * @param $cart
+     * @return void
+     */
+    private function validateQuantityBeforeAdding(Product $product, $cart): void
+    {
+        if ($product->getQuantity() !== -1) {
+            $cartProductQuantity = $cart;
+
+            if ($cartProductQuantity + 1 > $product->getQuantity()) {
+                throw new InvalidArgumentException('Quantity exceeds available stock');
+            }
+        }
     }
 
     public function get(): array
@@ -112,6 +146,14 @@ class CartService
         $total = 0;
 
         foreach ($products as $product) {
+            if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
+                continue;
+            }
+
+            if ($cartItems[$product->getId()] > $product->getQuantity()) {
+                continue;
+            }
+
             $items[] = [
                 'product' => $product,
                 'quantity' => $cartItems[$product->getId()],
@@ -163,7 +205,19 @@ class CartService
 
     public function quantity(Product $product, int $quantity): void
     {
+        if ($quantity < 1) {
+            throw new InvalidArgumentException('Quantity must be at least 1');
+        }
+
         $user = $this->security->getUser();
+
+        if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
+            throw new LogicException('Product is not active');
+        }
+
+        if ($product->getQuantity() !== -1 && $quantity > $product->getQuantity()) {
+            throw new InvalidArgumentException('Quantity exceeds available stock');
+        }
 
         if ($user instanceof User) {
             $this->updateDbQuantity($product, $quantity, $user);
@@ -172,12 +226,8 @@ class CartService
         }
     }
 
-    public function updateDbQuantity(Product $product, int $quantity, User $user): void
+    private function updateDbQuantity(Product $product, int $quantity, User $user): void
     {
-        if ($quantity < 1) {
-            throw new InvalidArgumentException('Quantity must be at least 1');
-        }
-
         $cart = $user->getCart();
 
         if (!$cart instanceof Cart) {
@@ -191,10 +241,6 @@ class CartService
 
     private function UpdateSessionQuantity(Product $product, int $quantity): void
     {
-        if ($quantity < 1) {
-            throw new InvalidArgumentException('Quantity must be at least 1');
-        }
-
         $cart = $this->requestStack->getSession()->get('cart', []);
 
         if (!array_key_exists($product->getId(), $cart)) {
