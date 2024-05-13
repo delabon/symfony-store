@@ -2,6 +2,27 @@
 
 Create products for your customers and accept crypto instead of real money.
 
+### Key features
+
+- Payment system using crypto currency
+- Cart
+- Invoice
+- Registration
+- User management 
+- Product management
+- Category management
+- Secure
+
+### Tech stack
+
+- PHP 8.2
+- Symfony 7 (Doctrine & Twig)
+- MySQL 8.3
+- Nginx
+- Docker
+- Javascript
+- CSS/SASS
+
 ### To test this on your local machine, follow the instruction bellow
 
 #### Add domain to /etc/hosts (host)
