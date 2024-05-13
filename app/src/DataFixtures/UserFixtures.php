@@ -37,6 +37,7 @@ class UserFixtures extends Fixture
         $admin->setUpdatedAt(new DateTimeImmutable());
         $admin->setVerified(true);
         $manager->persist($admin);
+        $this->addReference("admin", $admin);
 
         // Add regular users
         for ($i = 0; $i < 30; $i++) {
@@ -49,7 +50,6 @@ class UserFixtures extends Fixture
             $user->setUpdatedAt(new DateTimeImmutable());
             $user->setVerified(true);
             $manager->persist($user);
-            $this->addReference("user_{$i}", $user);
         }
 
         $manager->flush();

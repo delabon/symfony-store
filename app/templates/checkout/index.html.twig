@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout - {{ app_name }}{% endblock %}
+
+{% block body %}
+    <h1>Checkout</h1>
+
+    <div class="row mt-3">
+        <div class="col col-md-8">
+            <h3>Items</h3>
+
+            {% for item in items %}
+                <div class="d-flex align-items-start border-bottom border-dark-subtle pb-3 mb-3">
+                    {% if item.product.thumbnailId %}
+                        <img src="{{ thumbnails[product.id] }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
+                    {% else %}
+                        <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
+                    {% endif %}
+
+                    <div class="ms-3">
+                        <h5>{{ item.product.name|title }}</h5>
+                        <div>Quantity: {{ item.quantity }}</div>
+                        <div>Price: {{ item.product.salePrice|format_currency(app_currency, {rounding_mode: 'floor'}) }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div>
+                <strong>Total:</strong> {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+            </div>
+        </div>
+
+        <div class="col col-md-4">
+            <h3>Checkout details</h3>
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}

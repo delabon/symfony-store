@@ -222,7 +222,7 @@ class CartService
         if ($user instanceof User) {
             $this->updateDbQuantity($product, $quantity, $user);
         } else {
-            $this->UpdateSessionQuantity($product, $quantity);
+            $this->updateSessionQuantity($product, $quantity);
         }
     }
 
@@ -239,7 +239,7 @@ class CartService
         $this->cartRepository->save($cart);
     }
 
-    private function UpdateSessionQuantity(Product $product, int $quantity): void
+    private function updateSessionQuantity(Product $product, int $quantity): void
     {
         $cart = $this->requestStack->getSession()->get('cart', []);
 
@@ -249,5 +249,28 @@ class CartService
 
         $cart[$product->getId()] = $quantity;
         $this->requestStack->getSession()->set('cart', $cart);
+    }
+
+    public function clear(): void
+    {
+        $user = $this->security->getUser();
+
+        if ($user instanceof User) {
+            $this->clearDbCart($user);
+        } else {
+            $this->clearSessionCart();
+        }
+    }
+
+    private function clearDbCart(User $user): void
+    {
+        $cart = $user->getCart();
+        $cart->setItems([]);
+        $this->cartRepository->save($cart);
+    }
+
+    private function clearSessionCart(): void
+    {
+        $this->requestStack->getSession()->set('cart', []);
     }
 }

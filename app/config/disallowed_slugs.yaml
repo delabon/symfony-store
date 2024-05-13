@@ -7,3 +7,4 @@ parameters:
     - 'reset-password'
     - 'account'
     - 'contact'
+    - 'checkout'

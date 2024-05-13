@@ -18,6 +18,6 @@
     <div class="dropdown-divider"></div>
     <div class="dropdown-item">
         <strong>Total: {{ app_currency_symbol }}{{ cart.total }}</strong>
-        <a href="#" class="btn btn-success">Checkout</a>
+        <a href="{{ path('app_checkout_index') }}" class="btn btn-success">Checkout</a>
     </div>
 {% endif %}

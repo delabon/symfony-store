@@ -20,7 +20,7 @@ class PageFixtures extends Fixture implements DependentFixtureInterface
             );
             $page->setCreatedAt(new \DateTimeImmutable());
             $page->setUpdatedAt(new \DateTimeImmutable());
-            $page->setUser($this->getReference('user_' . $i));
+            $page->setUser($this->getReference('admin'));
             $manager->persist($page);
         }
 
