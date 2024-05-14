@@ -1,4 +1,4 @@
-## Acout
+## About
 
 Sell your products and accept payments securely on your site.
 
