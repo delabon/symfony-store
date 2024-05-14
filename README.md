@@ -4,7 +4,7 @@ Create products for your customers and accept crypto instead of real money.
 
 ### Key features
 
-- Payment system using crypto currency
+- Accept Payments
 - Cart
 - Invoice
 - Registration
@@ -23,7 +23,7 @@ Create products for your customers and accept crypto instead of real money.
 - Javascript
 - CSS/SASS
 
-### To test this on your local machine, follow the instruction bellow
+### To test this on your local machine, follow the instructions bellow
 
 #### Add domain to /etc/hosts (host)
 
