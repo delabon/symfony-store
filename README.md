@@ -1,17 +1,20 @@
-## CryptoStore
+## Acout
 
-Create products for your customers and accept crypto instead of real money.
+Sell your products and accept payments securely on your site.
 
 ### Key features
 
-- Accept Payments
+- Accept Payments (Stripe and Paypal)
 - Cart
 - Invoice
+- Refund
 - Registration
 - User management 
 - Product management
 - Category management
+- Page management
 - Secure
+- Emails
 
 ### Tech stack
 
