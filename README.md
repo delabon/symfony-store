@@ -32,7 +32,7 @@ Sell your products and accept payments securely on your site.
 
 ```bash
 sudo vi /etc/hosts
-127.0.0.111  crypto-store.test
+127.0.0.111  symfony-store.test
 ```
 
 #### Install mkcert (host)
@@ -43,7 +43,7 @@ curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
 chmod +x mkcert-v*-linux-amd64
 sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
 cd ssls/
-mkcert -install crypto-store.test
+mkcert -install symfony-store.test
 ```
 
 #### Up containers (host)
@@ -57,7 +57,7 @@ docker-compose up --build -d
 Copy the content of .env file and paste it in .env.local and then, Add the following
 
 ```dotenv
-DATABASE_URL="mysql://root:root@mysql-service:3306/crypto_store?serverVersion=8.3.0&charset=utf8mb4"
+DATABASE_URL="mysql://root:root@mysql-service:3306/my_store?serverVersion=8.3.0&charset=utf8mb4"
 MAILER_DSN=smtp://mailpit:1025
 ```
 
@@ -96,7 +96,7 @@ docker-compose run node-service npm run build
 
 #### Bowser
 
-Now, open https://crypto-store.test in your browser
+Now, open https://symfony-store.test in your browser
 
 #### Mailpit
 

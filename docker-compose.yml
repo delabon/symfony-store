@@ -1,7 +1,7 @@
 version: "3.3"
 
 networks:
-  cryptoStore:
+  SymfonyStore:
 
 services:
 
@@ -21,7 +21,7 @@ services:
       - php-service
       - mysql-service
     networks:
-      - cryptoStore
+      - SymfonyStore
 
   # php
   php-service:
@@ -38,7 +38,7 @@ services:
       - ./app:/var/www/project
       - ./config/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:
-      - cryptoStore
+      - SymfonyStore
 
   # mysql
   mysql-service:
@@ -56,7 +56,7 @@ services:
       MYSQL_USER: '${DB_USER_NAME}'
       MYSQL_PASSWORD: '${DB_USER_PSWD}'
     networks:
-      - cryptoStore
+      - SymfonyStore
 
   # phpmyadmin
   phpmyadmin:
@@ -70,7 +70,7 @@ services:
       PMA_HOST: mysql-service
       MYSQL_ROOT_PASSWORD: '${DB_ROOT_PSWD}'
     networks:
-      - cryptoStore
+      - SymfonyStore
 
   # node
   node-service:
@@ -84,7 +84,7 @@ services:
     volumes:
       - ./app:/code
     networks:
-      - cryptoStore
+      - SymfonyStore
 
   # mailpit (For testing email sending/receiving)
   mailpit:
@@ -102,4 +102,4 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
     networks:
-      - cryptoStore
+      - SymfonyStore
