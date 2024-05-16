@@ -28,6 +28,9 @@ class Cart
     #[ORM\Column]
     private ?DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(length: 255)]
+    private string $hash = '';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,5 +126,24 @@ class Cart
         }
 
         return $this;
+    }
+
+    public function getHash(): string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): static
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    public function generateHash(): string
+    {
+        $this->hash = hash('sha512', serialize($this->items) . uniqid());
+
+        return $this->hash;
     }
 }

@@ -17,7 +17,7 @@ use OutOfBoundsException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CartService
+readonly class CartService
 {
     public function __construct(
         private RequestStack $requestStack,
@@ -128,10 +128,14 @@ class CartService
             return [
                 'items' => [],
                 'total' => 0,
+                'hash' => '',
             ];
         }
 
-        return $this->prepareItemsAndTotal($cart->getItems());
+        $return = $this->prepareItemsAndTotal($cart->getItems());
+        $return['hash'] = $cart->getHash();
+
+        return $return;
     }
 
     private function getFromSession(): array
@@ -164,6 +168,7 @@ class CartService
         return [
             'items' => $items,
             'total' => $total,
+            'hash' => '',
         ];
     }
 

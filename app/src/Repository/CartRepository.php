@@ -23,6 +23,8 @@ class CartRepository extends ServiceEntityRepository
 
     public function save(Cart $cart): void
     {
+        $cart->generateHash();
+
         if ($cart->getId() === null) {
             $this->getEntityManager()->persist($cart);
         }
