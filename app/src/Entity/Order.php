@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use App\DTO\CheckoutDTO;
 use App\Enum\OrderStatusEnum;
 use App\Repository\OrderRepository;
+use App\ValueObject\Money;
+use CountryEnums\Country;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Stripe\PaymentMethod;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -25,55 +30,74 @@ class Order
     private ?User $customer = null;
 
     #[ORM\Column(length: 10)]
-    #[Assert\NotBlank]
-    #[Assert\Currency]
     private string $currency = '';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Assert\NotBlank]
-    #[Assert\PositiveOrZero]
     private string $total = '0';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Assert\NotBlank]
-    #[Assert\PositiveOrZero]
     private string $totalRefunded = '0';
 
     #[ORM\Column(length: 255)]
-    #[Assert\Choice(callback: [OrderStatusEnum::class, 'toArray'])]
     private OrderStatusEnum $status = OrderStatusEnum::PENDING;
 
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $UpdatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
     private string $firstName = '';
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
     private string $lastName = '';
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Email]
     private string $email = '';
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
     private string $address = '';
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 50)]
-    #[Assert\Regex(pattern: '/^[0-9a-z][0-9a-z\- ]+[0-9a-z]$/i', message: 'Invalid zip code')]
     private string $zipCode = '';
+
+    #[ORM\Column(length: 255)]
+    private Country $country = Country::US;
+
+    #[ORM\Column(length: 255)]
+    private string $city = '';
+
+    #[ORM\Column]
+    private array $paymentMetadata = [];
+
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order')]
+    private Collection $items;
+
+    #[ORM\Column(unique: true)]
+    private string $uniqueId = '';
+
+    public static function createFromMetadata(array $metadata): self
+    {
+        $order = new self();
+        $props = get_class_vars(self::class);
+
+        foreach ($metadata as $key => $value) {
+            if (!array_key_exists($key, $props)) {
+                continue;
+            }
+
+            if ($key === 'country') {
+                $order->$key = Country::parse($value);
+            } else {
+                $order->$key = $value;
+            }
+        }
+
+        $order->generateUniqueId();
+
+        return $order;
+    }
 
     public function getId(): ?int
     {
@@ -166,12 +190,12 @@ class Order
 
     public function getUpdatedAt(): ?DateTimeImmutable
     {
-        return $this->UpdatedAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(DateTimeImmutable $UpdatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
-        $this->UpdatedAt = $UpdatedAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -234,5 +258,77 @@ class Order
         $this->zipCode = $zipCode;
 
         return $this;
+    }
+
+    public function getCountry(): Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(Country $country): static
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function totalToCents(): int
+    {
+        $money = new Money($this->total);
+
+        return $money->toCents();
+    }
+
+    public function getCity(): string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): static
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getPaymentMetadata(): array
+    {
+        return $this->paymentMetadata;
+    }
+
+    public function setPaymentMetadata(array $paymentMetadata): static
+    {
+        $this->paymentMetadata = $paymentMetadata;
+
+        return $this;
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function setItems(Collection $items): static
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
+    public function getUniqueId(): string
+    {
+        return $this->uniqueId;
+    }
+
+    public function setUniqueId(string $uniqueId): void
+    {
+        $this->uniqueId = $uniqueId;
+    }
+
+    public function generateUniqueId(): string
+    {
+        $this->uniqueId = uniqid();
+
+        return $this->uniqueId;
     }
 }

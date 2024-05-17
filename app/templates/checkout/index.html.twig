@@ -32,7 +32,13 @@
 
         <div class="col col-md-4">
             <h3>Checkout details</h3>
-            {{ form(form) }}
+            {{ form(form, {'attr': {'id': 'checkout_form'}}) }}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>var stripe = Stripe('{{ stripe_public_key }}');</script>
+    {{ parent() }}
 {% endblock %}

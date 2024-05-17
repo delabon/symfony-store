@@ -22,6 +22,10 @@ parameters:
         - [300, 300]
         - [500, 500]
         - [1000, 1000]
+    stripe_mode: '%env(STRIPE_MODE)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_webhook_secret: '%env(STRIPE_WEBHOOKS_KEY)%'
 
 imports:
     - { resource: 'disallowed_slugs.yaml' }

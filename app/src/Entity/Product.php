@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\ProductStatusEnum;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -69,6 +70,9 @@ class Product
     #[Assert\NotBlank]
     #[Assert\GreaterThanOrEqual(-1)]
     private int $quantity = 0;
+
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
+    private Collection $items;
 
     public function getId(): ?int
     {
@@ -217,5 +221,15 @@ class Product
         $this->quantity = $quantity;
 
         return $this;
+    }
+
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function setItems(Collection $items): void
+    {
+        $this->items = $items;
     }
 }

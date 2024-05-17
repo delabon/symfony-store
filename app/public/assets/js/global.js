@@ -5,7 +5,7 @@
  * @param cssClass
  * @returns {string}
  */
-export function alert (type, message, cssClass) {
+export function message (type, message, cssClass) {
   return '<div class="alert alert-' + type + ' alert-dismissible fade show ' + cssClass + '" role="alert">' + message + '</div>';
 }
 
