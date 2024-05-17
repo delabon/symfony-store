@@ -6,22 +6,32 @@
     <h1>Edit product</h1>
 
     {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.slug) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.sale_price) }}
-        {{ form_row(form.quantity) }}
-        <p>-1 for unlimited quantity.</p>
-        {{ form_row(form.category) }}
-        {{ form_row(form.status) }}
-        {{ form_row(form.thumbnailFile) }}
-        {% if thumbnail %}
-            <p>
-                <img src="{{ thumbnail }}" alt="Thumbnail" style="max-width: 200px;">
-            </p>
-        {% endif %}
 
-        {{ form_row(form.save) }}
+    {{ form_row(form.name) }}
+
+    {{ form_row(form.slug) }}
+
+    {{ form_row(form.description) }}
+
+    {{ form_row(form.price) }}
+
+    {{ form_row(form.salePrice) }}
+
+    {{ form_row(form.quantity) }}
+    <p>-1 for unlimited quantity.</p>
+
+    {{ form_row(form.category) }}
+
+    {{ form_row(form.status) }}
+
+    {{ form_row(form.thumbnailFile) }}
+    {% if thumbnail %}
+        <p>
+            <img src="{{ thumbnail }}" alt="Thumbnail" style="max-width: 200px;">
+        </p>
+    {% endif %}
+
+    {{ form_row(form.save) }}
+
     {{ form_end(form) }}
 {% endblock %}

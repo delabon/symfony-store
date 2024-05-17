@@ -44,7 +44,7 @@ class ProductType extends AbstractType
             ->add('price', NumberType::class, [
                 'empty_data' => '',
             ])
-            ->add('sale_price', NumberType::class, [
+            ->add('salePrice', NumberType::class, [
                 'empty_data' => '',
             ])
             ->add('quantity', NumberType::class, [

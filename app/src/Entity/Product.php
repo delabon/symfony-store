@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\ProductStatusEnum;
 use App\Repository\ProductRepository;
+use App\Validator\EitherZeroOrGreaterThanOrEqualToPointFive;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -37,14 +38,14 @@ class Product
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
-    #[Assert\Positive]
+    #[EitherZeroOrGreaterThanOrEqualToPointFive]
     private ?string $price = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
-    #[Assert\PositiveOrZero]
+    #[EitherZeroOrGreaterThanOrEqualToPointFive]
     #[Assert\LessThanOrEqual(propertyPath: 'price')]
-    private ?string $sale_price = null;
+    private ?string $salePrice = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
@@ -117,12 +118,12 @@ class Product
 
     public function getSalePrice(): ?string
     {
-        return $this->sale_price;
+        return $this->salePrice;
     }
 
-    public function setSalePrice(string $sale_price): static
+    public function setSalePrice(string $salePrice): static
     {
-        $this->sale_price = $sale_price;
+        $this->salePrice = $salePrice;
 
         return $this;
     }
