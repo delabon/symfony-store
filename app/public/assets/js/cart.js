@@ -48,6 +48,7 @@ document.querySelectorAll('.btn-add-to-cart').forEach((button) => {
                     document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
                     notify('success', 'Product has been added to cart', 'popup-cart');
                     document.querySelector('.app-main-header .nav-item-cart .nav-link').dispatchEvent(new Event('click'));
+                    document.querySelector('body').dispatchEvent(new Event('cart-update'));
                 }
             });
         }).catch(function(error) {
@@ -81,6 +82,7 @@ document.addEventListener('click', function(event) {
                     document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
                     notify('success', 'Product has been deleted from cart', 'popup-cart');
                     document.querySelector('.app-main-header .nav-item-cart .nav-link').dispatchEvent(new Event('click'));
+                    document.querySelector('body').dispatchEvent(new Event('cart-update'));
                 }
             });
         }).catch(function(error) {
@@ -111,6 +113,7 @@ document.addEventListener('input', function(event) {
                 } else {
                     document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
                     notify('success', 'Quantity has been updated', 'popup-cart');
+                    document.querySelector('body').dispatchEvent(new Event('cart-update'));
                 }
             });
         }).catch(function(error) {

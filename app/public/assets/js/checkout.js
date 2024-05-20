@@ -1,4 +1,4 @@
-import {message, notify} from "./global";
+import {notify} from "./global";
 
 /**
  * Create payment intent
@@ -224,5 +224,15 @@ if (checkoutForm) {
                 notify('error', 'Payment has failed');
             }
         }
+    });
+}
+
+/**
+ * When cart is changed reload the checkout page
+ */
+
+if (location.href.search('/checkout') !== -1) {
+    document.querySelector('body').addEventListener('cart-update', event => {
+        location.reload();
     });
 }
