@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79c6c54391d72e8dd846da593ab7e70d",
+    "content-hash": "172c0e6f30ad14fd4126dae28675b175",
     "packages": [
         {
             "name": "bradietilley/country-enums",
@@ -1337,6 +1337,50 @@
                 }
             ],
             "time": "2023-10-06T06:47:41+00:00"
+        },
+        {
+            "name": "fraudlabspro/fraudlabspro-php",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fraudlabspro/fraudlabspro-php.git",
+                "reference": "65e71f8b4334445daba26d5bf1d2b7ebde218cf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fraudlabspro/fraudlabspro-php/zipball/65e71f8b4334445daba26d5bf1d2b7ebde218cf8",
+                "reference": "65e71f8b4334445daba26d5bf1d2b7ebde218cf8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FraudLabsPro\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "FraudLabs Pro",
+                    "homepage": "https://www.fraudlabspro.com"
+                }
+            ],
+            "description": "FraudLabs Pro PHP SDK to help merchants to detect fraud order and therefore reduce chargebacks.",
+            "support": {
+                "issues": "https://github.com/fraudlabspro/fraudlabspro-php/issues",
+                "source": "https://github.com/fraudlabspro/fraudlabspro-php/tree/4.0.0"
+            },
+            "time": "2024-01-11T08:08:21+00:00"
         },
         {
             "name": "psr/cache",

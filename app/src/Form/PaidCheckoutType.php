@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\DTO\PaidCheckoutCheckoutDTO;
+use App\DTO\PaidCheckoutDTO;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,7 +43,7 @@ class PaidCheckoutType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => PaidCheckoutCheckoutDTO::class,
+            'data_class' => PaidCheckoutDTO::class,
         ]);
     }
 }

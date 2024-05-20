@@ -6,7 +6,7 @@ use App\Abstract\AbstractCheckoutDTO;
 use App\Validator\CardExpirationDate;
 use Symfony\Component\Validator\Constraints AS Assert;
 
-readonly class PaidCheckoutCheckoutDTO extends AbstractCheckoutDTO
+readonly class PaidCheckoutDTO extends AbstractCheckoutDTO
 {
     public function __construct(
         #[Assert\Valid]

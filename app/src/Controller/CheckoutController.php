@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\DTO\CheckoutDetails;
 use App\DTO\FreeCheckoutDTO;
-use App\DTO\PaidCheckoutCheckoutDTO;
+use App\DTO\PaidCheckoutDTO;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Enum\OrderStatusEnum;
+use App\Exception\FraudLabsProApiException;
+use App\Exception\FraudLabsProRejectException;
 use App\Exception\InvalidCheckoutInputException;
 use App\Form\FreeCheckoutType;
 use App\Form\PaidCheckoutType;
 use App\Service\CartService;
 use App\Service\CheckoutService;
+use App\Service\FraudDetectionService;
 use App\Service\StripeService;
 use App\Service\ThumbnailService;
 use App\ValueObject\Money;
@@ -48,7 +51,7 @@ class CheckoutController extends AbstractController
         if ($total == 0) {
             $form = $this->createForm(FreeCheckoutType::class, new FreeCheckoutDTO(checkoutDetails: $checkoutDetails));
         } else {
-            $form = $this->createForm(PaidCheckoutType::class, new PaidCheckoutCheckoutDTO(checkoutDetails: $checkoutDetails));
+            $form = $this->createForm(PaidCheckoutType::class, new PaidCheckoutDTO(checkoutDetails: $checkoutDetails));
         }
 
         $thumbnails = [];
@@ -71,7 +74,8 @@ class CheckoutController extends AbstractController
         StripeService $stripeService,
         Request $request,
         CsrfTokenManagerInterface $csrfTokenManager,
-        CheckoutService $checkoutService
+        CheckoutService $checkoutService,
+        FraudDetectionService $fraudDetectionService
     ): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -96,8 +100,9 @@ class CheckoutController extends AbstractController
 
         try {
             $checkoutDetails = CheckoutDetails::createFromArray($data);
-            $checkoutDTO = PaidCheckoutCheckoutDTO::createFromRequest($checkoutDetails, $data);
+            $checkoutDTO = PaidCheckoutDTO::createFromRequest($checkoutDetails, $data);
             $checkoutService->validateForm($checkoutDTO);
+            $fraudDetectionService->validate($checkoutDTO, $total, $cart['quantity'], $cart['currency']);
             $pm = $stripeService->createPaymentMethod($checkoutDTO);
             $pi = $stripeService->createPaymentIntent($pm, $money, $this->getParameter('app_currency'), $checkoutDTO->getEmail());
             $csrfToken = $csrfTokenManager->refreshToken('paid_checkout')->getValue();
@@ -122,7 +127,11 @@ class CheckoutController extends AbstractController
         } catch (ReflectionException $e) {
             return $this->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (ApiErrorException $e) {
-            return $this->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (FraudLabsProApiException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_SERVICE_UNAVAILABLE);
+        } catch (FraudLabsProRejectException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_FORBIDDEN);
         }
     }
 

@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 readonly class CartService
@@ -24,7 +25,9 @@ readonly class CartService
         private RequestStack $requestStack,
         private ProductRepository $productRepository,
         private CartRepository $cartRepository,
-        private Security $security
+        private Security $security,
+        #[Autowire('%app_currency%')]
+        private string $currency
     )
     {
     }
@@ -121,6 +124,31 @@ readonly class CartService
         return $this->getFromSession();
     }
 
+    public function getTotal(): float
+    {
+        return $this->get()['total'];
+    }
+
+    public function getQuantity(): int
+    {
+        return $this->get()['quantity'];
+    }
+
+    public function getItems(): array
+    {
+        return $this->get()['items'];
+    }
+
+    public function getHash(): string
+    {
+        return $this->get()['hash'];
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
     private function getFromDb(User $user): array
     {
         $cart = $user->getCart();
@@ -129,12 +157,15 @@ readonly class CartService
             return [
                 'items' => [],
                 'total' => 0,
+                'quantity' => 0,
                 'hash' => '',
+                'currency' => $this->currency
             ];
         }
 
         $return = $this->prepareItemsAndTotal($cart->getItems());
         $return['hash'] = $cart->getHash();
+        $return['currency'] = $this->currency;
 
         return $return;
     }
@@ -149,6 +180,7 @@ readonly class CartService
         $products = $this->productRepository->findBy(['id' => array_keys($cartItems)]);
         $items = [];
         $total = 0;
+        $totalQuantity = 0;
 
         foreach ($products as $product) {
             if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
@@ -163,13 +195,14 @@ readonly class CartService
                 'product' => $product,
                 'quantity' => $cartItems[$product->getId()],
             ];
+            $totalQuantity += $cartItems[$product->getId()];
             $total += $cartItems[$product->getId()] * StringToFloatUtility::convert($product->getSalePrice());
         }
 
         return [
             'items' => $items,
             'total' => $total,
-            'hash' => '',
+            'quantity' => $totalQuantity,
         ];
     }
 

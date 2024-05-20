@@ -5,6 +5,7 @@ Sell your products and accept payments securely on your site.
 ### Key features
 
 - Accept Payments (Stripe)
+- Fraud detection (FraudLabs Pro)
 - Cart
 - Invoice
 - Refund
