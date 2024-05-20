@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\DTO\CheckoutDTO;
+use App\DTO\PaidCheckoutCheckoutDTO;
 use App\ValueObject\Money;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
@@ -24,11 +24,11 @@ class StripeService
     }
 
     /**
-     * @param CheckoutDTO $checkoutDTO
+     * @param PaidCheckoutCheckoutDTO $checkoutDTO
      * @return PaymentMethod
      * @throws ApiErrorException
      */
-    public function createPaymentMethod(CheckoutDTO $checkoutDTO): PaymentMethod
+    public function createPaymentMethod(PaidCheckoutCheckoutDTO $checkoutDTO): PaymentMethod
     {
         return $this->client->paymentMethods->create([
             'type' => 'card',

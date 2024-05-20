@@ -3,10 +3,11 @@
 namespace App\DTO;
 
 use CountryEnums\Country;
-use CountryEnums\Exceptions\EnumNotFoundException;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Validator\Constraints AS Assert;
 
-class CheckoutDTO
+final readonly class CheckoutDetails
 {
     public function __construct(
         #[Assert\NotBlank]
@@ -39,44 +40,33 @@ class CheckoutDTO
         #[Assert\Length(min: 2, max: 50)]
         #[Assert\Regex(pattern: '/^[0-9a-z][0-9a-z\- ]+[0-9a-z]$/i', message: 'Invalid zip code')]
         public string $zipCode = '',
-
-        #[Assert\NotBlank]
-        #[Assert\CardScheme(schemes: ['MASTERCARD', 'VISA', 'DISCOVER', 'JCB', 'AMEX', 'CHINA_UNIONPAY', 'MAESTRO'])]
-        public string $ccNumber = '',
-
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 3, max: 5)]
-        #[Assert\Regex(pattern: '/^[0-1][0-9]\/[0-3][0-9]$/i', message: 'Invalid expiration date')]
-        public string $ccDate = '',
-
-        #[Assert\NotBlank]
-        #[Assert\Regex(pattern: '/^[0-9]{3,4}$/', message: 'Invalid CVC  code')]
-        public string $ccCvc = '',
     ) {}
 
     /**
      * @param array $data
-     * @return self
-     * @throws EnumNotFoundException
+     * @return static
+     * @throws ReflectionException
      */
-    public static function createFromRequest(array $data): self
+    public static function createFromArray(array $data): self
     {
-        $checkoutDTO = new self();
-        $props = get_class_vars(CheckoutDTO::class);
+        $reflector = new ReflectionClass(self::class);
+        $instance = $reflector->newInstanceWithoutConstructor();
 
         foreach ($data as $key => $value) {
-            if (!array_key_exists($key, $props)) {
+            if (!$reflector->hasProperty($key)) {
                 continue;
             }
 
+            $prop = $reflector->getProperty($key);
+
             if ($key === 'country') {
-                $checkoutDTO->country = Country::parse($value);
+                $prop->setValue($instance, Country::parse($value));
             } else {
-                $checkoutDTO->$key = $value;
+                $prop->setValue($instance, $value);
             }
         }
 
-        return $checkoutDTO;
+        return $instance;
     }
 
     public function getFirstName(): string
@@ -112,20 +102,5 @@ class CheckoutDTO
     public function getZipCode(): string
     {
         return $this->zipCode;
-    }
-
-    public function getCcNumber(): string
-    {
-        return $this->ccNumber;
-    }
-
-    public function getCcDate(): string
-    {
-        return $this->ccDate;
-    }
-
-    public function getCcCvc(): string
-    {
-        return $this->ccCvc;
     }
 }

@@ -12,7 +12,7 @@
             {% for item in items %}
                 <div class="d-flex align-items-start border-bottom border-dark-subtle pb-3 mb-3">
                     {% if item.product.thumbnailId %}
-                        <img src="{{ thumbnails[product.id] }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
+                        <img src="{{ thumbnails[item.product.id] }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
                     {% else %}
                         <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
                     {% endif %}
@@ -32,12 +32,38 @@
 
         <div class="col col-md-4">
             <h3>Checkout details</h3>
-            {{ form(form, {'attr': {'id': 'checkout_form'}}) }}
+            {{ form_start(form, {'attr': {'id': 'checkout_form'}}) }}
+
+            {{ form_row(form._token, {'attr': {'class': 'checkout-token'}}) }}
+
+            {{ form_row(form.checkoutDetails.firstName) }}
+            {{ form_row(form.checkoutDetails.lastName) }}
+            {{ form_row(form.checkoutDetails.email) }}
+            {{ form_row(form.checkoutDetails.address) }}
+            {{ form_row(form.checkoutDetails.country) }}
+            {{ form_row(form.checkoutDetails.city) }}
+            {{ form_row(form.checkoutDetails.zipCode) }}
+
+            {% if total > 0 %}
+                {{ form_row(form.ccNumber) }}
+                {{ form_row(form.ccDate) }}
+                {{ form_row(form.ccCvc) }}
+                {{ form_row(form.checkoutDetails.save) }}
+            {% else %}
+                {{ form_row(form.checkoutDetails.save, {'label': 'Complete order'}) }}
+            {% endif %}
+
+            {{ form_end(form, {render_rest: false}) }}
         </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        var orderData = {
+            total: {{ total }}
+        };
+    </script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>var stripe = Stripe('{{ stripe_public_key }}');</script>
     {{ parent() }}

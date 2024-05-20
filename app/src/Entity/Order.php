@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\DTO\CheckoutDTO;
+use App\DTO\CheckoutDetails;
 use App\Enum\OrderStatusEnum;
 use App\Repository\OrderRepository;
 use App\ValueObject\Money;

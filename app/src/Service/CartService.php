@@ -9,6 +9,7 @@ use App\Enum\ProductStatusEnum;
 use App\Exception\ProductOutOfStockException;
 use App\Repository\CartRepository;
 use App\Repository\ProductRepository;
+use App\Utility\StringToFloatUtility;
 use DateTimeImmutable;
 use Exception;
 use InvalidArgumentException;
@@ -162,7 +163,7 @@ readonly class CartService
                 'product' => $product,
                 'quantity' => $cartItems[$product->getId()],
             ];
-            $total += $cartItems[$product->getId()] * $product->getSalePrice();
+            $total += $cartItems[$product->getId()] * StringToFloatUtility::convert($product->getSalePrice());
         }
 
         return [
