@@ -126,12 +126,12 @@ class CheckoutController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         } catch (ReflectionException $e) {
             return $this->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (ApiErrorException $e) {
-            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (FraudLabsProApiException $e) {
             return $this->json(['message' => $e->getMessage()], Response::HTTP_SERVICE_UNAVAILABLE);
         } catch (FraudLabsProRejectException $e) {
             return $this->json(['message' => $e->getMessage()], Response::HTTP_FORBIDDEN);
+        } catch (ApiErrorException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
     }
 

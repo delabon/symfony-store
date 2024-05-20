@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\DTO\PaidCheckoutDTO;
 use App\Exception\FraudLabsProApiException;
+use App\Exception\FraudLabsProRejectException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use FraudLabsPro\FraudValidation;
 use FraudLabsPro\Configuration;
@@ -25,8 +26,8 @@ class FraudDetectionService
         // Order details
         $orderDetails = [
             'order' => [
-                'orderId' => '67398',
-                'note' => 'Online shop',
+                // 'orderId' => '',
+                // 'note' => 'Online shop',
                 'currency' => strtoupper($currency),
                 'amount' => $total,
                 'quantity' => $quantity,
@@ -43,9 +44,9 @@ class FraudDetectionService
                 'firstName' => $checkoutDTO->getFirstName(),
                 'lastName' => $checkoutDTO->getLastName(),
                 'email' => $checkoutDTO->getEmail(),
-                'phone' => '',
+                // 'phone' => '',
 
-                'state' => '',
+                // 'state' => '',
                 'address' => $checkoutDTO->getAddress(),
                 'city' => $checkoutDTO->getCity(),
                 'postcode' => $checkoutDTO->getZipCode(),
@@ -53,7 +54,7 @@ class FraudDetectionService
             ],
 
             'shipping' => [
-                'state' => '',
+                // 'state' => '',
                 'address' => $checkoutDTO->getAddress(),
                 'city' => $checkoutDTO->getCity(),
                 'postcode' => $checkoutDTO->getZipCode(),
@@ -69,7 +70,7 @@ class FraudDetectionService
         }
 
         if ($result->fraudlabspro_status !== FraudValidation::APPROVE) {
-            throw new FraudLabsProApiException();
+            throw new FraudLabsProRejectException();
         }
     }
 }
