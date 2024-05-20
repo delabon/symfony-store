@@ -4,10 +4,11 @@ Sell your products and accept payments securely on your site.
 
 ### Key features
 
-- Accept Payments (Stripe and Paypal)
+- Accept Payments (Stripe)
 - Cart
 - Invoice
 - Refund
+- Order management
 - Registration
 - User management 
 - Product management
