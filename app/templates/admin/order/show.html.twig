@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Order #{{ order.id }}{% endblock %}
+
+{% block body %}
+    <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
+
+    <div class="mt-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for orderItem in order.items %}
+                    <tr>
+                        <td>{{ orderItem.name|title }}</td>
+                        <td>{{ (orderItem.price * orderItem.quantity)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                        <td>{{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td><strong>Order total</strong></td>
+                    <td>{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total refunded</strong></td>
+                    <td>{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+    </div>
+
+{% endblock %}

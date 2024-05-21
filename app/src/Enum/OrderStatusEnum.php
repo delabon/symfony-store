@@ -18,4 +18,14 @@ enum OrderStatusEnum: string
             self::PARTIAL_REFUNDED,
         ];
     }
+
+    public function toLabel(): string
+    {
+        return match ($this) {
+            OrderStatusEnum::COMPLETED => 'Completed',
+            OrderStatusEnum::REFUNDED => 'Refunded',
+            OrderStatusEnum::PENDING => 'Pending',
+            OrderStatusEnum::PARTIAL_REFUNDED => 'Partial Refunded',
+        };
+    }
 }

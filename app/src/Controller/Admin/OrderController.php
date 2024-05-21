@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class OrderController extends AbstractController
 {
     #[Route('/admin/orders', name: 'admin_order_index')]
@@ -31,12 +33,8 @@ class OrderController extends AbstractController
     #[Route('/admin/orders/{id<\d+>}', name: 'admin_order_show')]
     public function show(Order $order): Response
     {
-        return new Response();
-    }
-
-    #[Route('/admin/orders/{id<\d+>}/refund', name: 'admin_order_refund')]
-    public function refund(Order $order): Response
-    {
-        return new Response();
+        return $this->render('admin/order/show.html.twig', [
+            'order' => $order,
+        ]);
     }
 }
