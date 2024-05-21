@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Image;
 
@@ -84,6 +85,39 @@ class ProductType extends AbstractType
                             'image/gif',
                         ],
                         'mimeTypesMessage' => 'Please upload a valid thumbnail.',
+                    ])
+                ],
+            ])
+            ->add('productFiles', FileType::class, [
+                'label' => 'Files',
+                'multiple' => true,
+                // unmapped means that this field is not associated to any entity property
+                'mapped' => false,
+                // make it optional so you don't have to re-upload the PDF file
+                // every time you edit the Product details
+                'required' => false,
+                // unmapped fields can't define their validation using attributes
+                // in the associated entity, so you can use the PHP constraint classes
+                'constraints' => [
+                    new All([
+                        'constraints' => [
+                            new File([
+                                'maxSize' => '20M',
+                                'mimeTypes' => [
+                                    'image/jpeg',
+                                    'image/jpg',
+                                    'image/png',
+                                    'image/gif',
+                                    'video/x-msvideo',
+                                    'video/mp4',
+                                    'video/mpeg',
+                                    'audio/mpeg',
+                                    'audio/vnd.wav',
+                                    'application/pdf',
+                                ],
+                                'mimeTypesMessage' => 'Allowed files: jpeg, jpg, png, gif, mp4, avi, mpeg, mp3, wav, pdf',
+                            ])
+                        ]
                     ])
                 ],
             ])

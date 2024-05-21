@@ -75,6 +75,9 @@ class Product
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
     private Collection $items;
 
+    #[ORM\Column(options: ['defaults' => '[]'])]
+    private array $files = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -232,5 +235,17 @@ class Product
     public function setItems(Collection $items): void
     {
         $this->items = $items;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
+    }
+
+    public function setFiles(array $files): static
+    {
+        $this->files = $files;
+
+        return $this;
     }
 }

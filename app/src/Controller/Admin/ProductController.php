@@ -6,11 +6,14 @@ use App\Entity\Product;
 use App\Form\ProductType;
 use App\Repository\FileRepository;
 use App\Repository\ProductRepository;
+use App\Service\FileUploaderService;
 use App\Service\ThumbnailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,6 +25,8 @@ class ProductController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly FileUploaderService $fileUploaderService,
+        private readonly ThumbnailService $thumbnailService
     )
     {
     }
@@ -41,19 +46,40 @@ class ProductController extends AbstractController
     }
 
     #[Route('/create', name: 'create')]
-    public function create(Request $request, ThumbnailService $thumbnailService): Response
+    public function create(
+        Request $request
+    ): Response
     {
-        $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, new Product());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($form->getData());
-            $this->entityManager->flush();
-            $this->uploadThumbnail($form, $thumbnailService, $product);
-            $this->addFlash('success', 'Your product has been added.');
+            /** @var Product $product */
+            $product = $form->getData();
 
-            return $this->redirectToRoute('admin_product_index');
+            try {
+                $fileIds = $this->uploadFiles($form);
+
+                if ($fileIds === []) {
+                    throw new InvalidArgumentException('Please upload at least one file.');
+                }
+
+                $product->setFiles($fileIds);
+                $this->entityManager->persist($product);
+                $this->entityManager->flush();
+                $this->uploadThumbnail($form, $product);
+                $this->addFlash('success', 'Your product has been added.');
+
+                return $this->redirectToRoute('admin_product_index');
+            } catch (FileException $e) {
+                $this->addFlash('error', 'Could not upload the fciles: ' . $e->getMessage());
+
+                return $this->redirectToRoute('admin_product_create');
+            } catch (InvalidArgumentException $e) {
+                $this->addFlash('error', 'Please upload at least one file.');
+
+                return $this->redirectToRoute('admin_product_create');
+            }
         }
 
         return $this->render('admin/product/create.html.twig', [
@@ -62,7 +88,11 @@ class ProductController extends AbstractController
     }
 
     #[Route('/edit/{id<\d+>}', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Product $product, Request $request, ThumbnailService $thumbnailService, FileRepository $fileRepository): Response
+    public function edit(
+        Product $product,
+        Request $request,
+        FileRepository $fileRepository
+    ): Response
     {
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
@@ -71,8 +101,8 @@ class ProductController extends AbstractController
             $this->entityManager->flush(); // needs to save the product's data first
 
             if ($form->has('thumbnailFile') && $form->get('thumbnailFile')->getData()) {
-                $thumbnailService->delete($fileRepository->find($product->getThumbnailId() ?: 0));
-                $this->uploadThumbnail($form, $thumbnailService, $product);
+                $this->thumbnailService->delete($fileRepository->find($product->getThumbnailId() ?: 0));
+                $this->uploadThumbnail($form, $product);
             }
 
             $this->addFlash('success', 'Your product has been updated.');
@@ -83,7 +113,7 @@ class ProductController extends AbstractController
         return $this->render('admin/product/edit.html.twig', [
             'form' => $form,
             'product' => $product,
-            'thumbnail' => $thumbnailService->getUrl($product->getThumbnailId() ?: 0),
+            'thumbnail' => $this->thumbnailService->getUrl($product->getThumbnailId() ?: 0),
         ]);
     }
 
@@ -106,16 +136,32 @@ class ProductController extends AbstractController
      */
     protected function uploadThumbnail(
         FormInterface $form,
-        ThumbnailService $thumbnailService,
         Product $product
     ): void {
         if ($form->has('thumbnailFile') && $form->get('thumbnailFile')->getData()) {
             try {
-                $thumbnailId = $thumbnailService->upload($form->get('thumbnailFile')->getData());
+                $thumbnailId = $this->thumbnailService->upload($form->get('thumbnailFile')->getData());
                 $product->setThumbnailId($thumbnailId);
                 $this->entityManager->flush();
             } catch (Exception $e) {
                 $this->addFlash('error', 'Could not upload the thumbnail.');
+            }
+        }
+    }
+
+    private function uploadFiles(FormInterface $form): array
+    {
+        if ($form->has('productFiles') && $form->get('productFiles')->getData()) {
+            try {
+                $fileIds = [];
+
+                foreach ($form->get('productFiles')->getData() as $file) {
+                    $fileIds[] = $this->fileUploaderService->upload($file);
+                }
+
+                return $fileIds;
+            } catch (Exception $e) {
+                $this->addFlash('error', 'Could not upload the files: ' . $e->getMessage());
             }
         }
     }
