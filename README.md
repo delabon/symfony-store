@@ -1,6 +1,6 @@
 ## About
 
-Sell your products and accept payments securely on your site.
+Sell your digital goods and accept payments securely on your site.
 
 ### Key features
 
