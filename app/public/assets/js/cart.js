@@ -5,6 +5,10 @@ import { notify } from "./global.js";
  */
 
 window.addEventListener('load', () => {
+    if (!document.querySelector('.nav-item-cart')) {
+        return;
+    }
+
     fetch('/cart', {
         method: 'GET',
         headers: {

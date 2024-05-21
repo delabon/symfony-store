@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Orders{% endblock %}
+
+{% block body %}
+    <h1>Orders</h1>
+    <p>Manage your orders.</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Total Refunded</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th style="width: 150px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.status.value }}</td>
+                <td>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                <td>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                <td>
+                    ID: {{ order.customer.id }}
+                    <br>
+                    Name: {{ order.firstName|title }} {{ order.lastName|title }}
+                    <br>
+                    Email: {{ order.email }}
+                </td>
+                <td>{{ order.createdAt|date('Y-m-d') }}</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ path('admin_order_refund', {id: order.id}) }}" class="btn btn-sm btn-danger ms-2 app-refund-confirm">Refund</a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% include 'views/pagination.html.twig' with {'route': 'admin_order_index', 'maxPages': maxPages, 'page': page} %}
+
+{% endblock %}
