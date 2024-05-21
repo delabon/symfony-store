@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Repository\CategoryRepository;
+use App\Repository\OrderRepository;
 use App\Repository\PageRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
@@ -19,7 +20,8 @@ class AdminController extends AbstractController
         ProductRepository $productRepository,
         CategoryRepository $categoryRepository,
         UserRepository $userRepository,
-        PageRepository $pageRepository
+        PageRepository $pageRepository,
+        OrderRepository $orderRepository
     ): Response
     {
         return $this->render('admin/index.html.twig', [
@@ -27,6 +29,7 @@ class AdminController extends AbstractController
             'categoriesCount' => $categoryRepository->count(),
             'usersCount' => $userRepository->count(),
             'pagesCount' => $pageRepository->count(),
+            'ordersCount' => $orderRepository->count(),
         ]);
     }
 }
