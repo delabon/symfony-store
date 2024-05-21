@@ -6,6 +6,7 @@ twig:
         app_version: '%app_version%'
         app_currency: '%app_currency%'
         app_currency_symbol: '%app_currency_symbol%'
+        app_uploads_dir: '%app_uploads_dir%'
         stripe_public_key: '%stripe_public_key%'
     form_themes: ['bootstrap_5_layout.html.twig']
 

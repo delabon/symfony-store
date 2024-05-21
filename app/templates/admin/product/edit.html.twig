@@ -18,6 +18,7 @@
     {{ form_row(form.salePrice) }}
 
     {{ form_row(form.quantity) }}
+
     <p>-1 for unlimited quantity.</p>
 
     {{ form_row(form.category) }}
@@ -25,13 +26,35 @@
     {{ form_row(form.status) }}
 
     {{ form_row(form.thumbnailFile) }}
+
     {% if thumbnail %}
         <p>
             <img src="{{ thumbnail }}" alt="Thumbnail" style="max-width: 200px;">
         </p>
     {% endif %}
 
+    {{ form_row(form.productFiles) }}
+
+    <h6>Current Files</h6>
+    <ul>
+        {% for file in currentFiles %}
+            <li class="mt-2">
+                {{ file.name }}
+                <button data-productid="{{ product.id }}" data-id="{{ file.id }}" class="btn btn-danger btn-sm btn-delete-file">Delete</button>
+                <a href="{{ uploadDirUrl }}/{{ file.name }}" target="_blank" class="btn btn-primary btn-sm">View</a>
+            </li>
+        {% endfor %}
+    </ul>
+
     {{ form_row(form.save) }}
 
     {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var deleteFileCsrfToken = "{{ csrf_token('delete_file_csrf') }}";
+    </script>
+
+    {{ parent() }}
 {% endblock %}

@@ -244,7 +244,7 @@ class Product
 
     public function setFiles(array $files): static
     {
-        $this->files = $files;
+        $this->files = array_values($files);
 
         return $this;
     }
