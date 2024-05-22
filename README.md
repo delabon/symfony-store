@@ -13,6 +13,7 @@ Sell your digital goods and accept payments securely on your site.
 - Registration
 - User management 
 - Product management
+- Product search
 - Category management
 - Page management
 - Secure
