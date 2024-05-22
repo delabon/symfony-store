@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use InvalidArgumentException;
 
 /**
  * @extends ServiceEntityRepository<Order>
@@ -30,5 +32,29 @@ class OrderRepository extends ServiceEntityRepository
                 ->setFirstResult(($page - 1) * $limit)
                 ->setMaxResults($limit)
         );
+    }
+
+    /**
+     * @param int $page
+     * @param int $limit
+     * @param User $customer
+     * @return Paginator
+     */
+    public function paginateByCustomer(int $page, int $limit, User $customer): Paginator
+    {
+        if (!$customer->getId()) {
+            throw new InvalidArgumentException('The customer is invalid.');
+        }
+
+        $builder = $this->createQueryBuilder('o')
+            ->orderBy('o.id', 'DESC');
+
+        $builder->where('o.customer = :customer')
+            ->setParameter('customer', $customer);
+
+        $builder->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        return new Paginator($builder);
     }
 }

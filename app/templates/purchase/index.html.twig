@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'SymfonyStore - Orders' %}
+
+{% block body %}
+    <h1 class="text-center">Purchases</h1>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Total Refunded</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.status.toLabel }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>{{ order.totalRefunded }}</td>
+                    <td style="width: 150px">
+                        <a class="btn btn-primary btn-sm">View</a>
+                        <a class="btn btn-danger btn-sm">Refund</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+
+    {% include 'views/pagination.html.twig' with {'route': 'admin_product_index', 'maxPages': maxPages, 'page': page} %}
+{% endblock %}
