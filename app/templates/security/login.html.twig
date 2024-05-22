@@ -9,36 +9,43 @@
         {% endif %}
 
         {% if app.user %}
+            {% if not app.user.isVerified %}
+                <div class="alert alert-info">
+                    Please verify your email!
+                </div>
+            {% endif %}
+
             <div class="mb-3">
                 You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
             </div>
+        {% else %}
+            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <label for="inputEmail">Email/Username</label>
+            <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+            <label for="inputPassword">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+            <input type="hidden" name="_csrf_token"
+                   value="{{ csrf_token('authenticate') }}"
+            >
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Remember me
+                </label>
+            </div>
+
+            <p>
+                <button class="btn btn-lg btn-primary" type="submit">
+                    Sign in
+                </button>
+            </p>
+
+            <p>
+                <a href="{{ path('app_register') }}">Register</a>
+                - <a href="{{ path('app_forgot_password_request') }}">Reset password</a>
+            </p>
+
         {% endif %}
-
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="inputEmail">Email/Username</label>
-        <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-        <label for="inputPassword">Password</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
-
-        <div class="checkbox mb-3">
-            <label>
-                <input type="checkbox" name="_remember_me"> Remember me
-            </label>
-        </div>
-
-        <p>
-            <button class="btn btn-lg btn-primary" type="submit">
-                Sign in
-            </button>
-        </p>
-
-        <p>
-            <a href="{{ path('app_register') }}">Register</a>
-            - <a href="{{ path('app_forgot_password_request') }}">Reset password</a>
-        </p>
     </form>
 {% endblock %}

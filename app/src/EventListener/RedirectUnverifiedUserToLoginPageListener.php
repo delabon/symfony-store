@@ -9,14 +9,14 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-final readonly class LogoutUnverifiedUserListener
+final readonly class RedirectUnverifiedUserToLoginPageListener
 {
     public function __construct(
-        private LogoutUserService $logoutUserService,
         private Security $security,
-        private RouterInterface $router
+        private UrlGeneratorInterface $urlGenerator
     )
     {
     }
@@ -34,9 +34,18 @@ final readonly class LogoutUnverifiedUserListener
             return;
         }
 
-        $this->logoutUserService->handle();
-        $event->getRequest()->getSession()->getFlashBag()->add('info', 'You need to verify your email.');
+        if ($event->getRequest()->getPathInfo() === $this->urlGenerator->generate('app_logout')) {
+            return;
+        }
 
-        $event->setResponse(new RedirectResponse($this->router->generate('app_login')));
+        if ($event->getRequest()->getPathInfo() === $this->urlGenerator->generate('app_verify_email')) {
+            return;
+        }
+
+        if ($event->getRequest()->getPathInfo() === $this->urlGenerator->generate('app_login')) {
+            return;
+        }
+
+        $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
     }
 }
