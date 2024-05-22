@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
+use App\Entity\OrderItem;
+use App\Enum\ProductStatusEnum;
+use App\Repository\FileRepository;
 use App\Repository\OrderRepository;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,6 +37,37 @@ class PurchaseController extends AbstractController
             'orders' => $paginator,
             'maxPages' => ceil($paginator->count() / $limit),
             'page' => $page
+        ]);
+    }
+
+    #[Route('/{id<\d+>}', name: 'show')]
+    public function show(
+        Order $order,
+        FileRepository $fileRepository
+    ): Response
+    {
+        if ($order->getCustomer() != $this->getUser()) {
+            $this->addFlash('danger', 'You can only view your purchases.');
+
+            return $this->redirectToRoute('app_purchase_index');
+        }
+
+        $files = [];
+
+        foreach ($order->getItems() as $item) {
+            /** @var $item OrderItem */
+            $product = $item->getProduct();
+
+            if ($product && $product->getStatus() === ProductStatusEnum::PUBLISHED && count($product->getFiles())) {
+                $files[$item->getId()] = $fileRepository->findBy(['id' => $product->getFiles()]);
+            } elseif (isset($item->getMetadata()['files']) && is_array($item->getMetadata()['files'])) {
+                $files[$item->getId()] = $fileRepository->findBy(['id' => $item->getMetadata()['files']]);
+            }
+        }
+
+        return $this->render('purchase/show.html.twig', [
+            'order' => $order,
+            'files' => $files,
         ]);
     }
 }

@@ -23,7 +23,7 @@
                     <td>{{ order.total }}</td>
                     <td>{{ order.totalRefunded }}</td>
                     <td style="width: 150px">
-                        <a class="btn btn-primary btn-sm">View</a>
+                        <a class="btn btn-primary btn-sm" href="{{ path('app_purchase_show', {'id': order.id}) }}">View</a>
                         <a class="btn btn-danger btn-sm">Refund</a>
                     </td>
                 </tr>

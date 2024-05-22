@@ -38,7 +38,6 @@
             </tbody>
         </table>
 
-        <a href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+        <a class="btn btn-sm btn-primary" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
     </div>
-
 {% endblock %}

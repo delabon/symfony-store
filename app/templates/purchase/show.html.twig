@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'SymfonyStore - Order' %}
+
+{% block body %}
+    <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
+
+    <div class="mt-5">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Product</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Files</th>
+                <th style="width: 120px">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for orderItem in order.items %}
+                <tr>
+                    <td>{{ orderItem.name|title }}</td>
+                    <td>{{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    <td>{{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</td>
+                    <td>
+                        {% if files[orderItem.id] is defined %}
+                            {% for file in files[orderItem.id] %}
+                                <a href="{{ path('app_download_order_item_file', {'id': orderItem.id, 'fileId': file.id}) }}" class="btn btn-sm btn-success">Download file #{{ file.id }}</a>
+                            {% endfor %}
+                        {% else %}
+                            No files
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not orderItem.isRefunded %}
+                            <button class="btn btn-sm btn-danger">Refund</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <td><strong>Order total</strong></td>
+                <td>{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+            </tr>
+            <tr>
+                <td><strong>Total refunded</strong></td>
+                <td>{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a class="btn btn-sm btn-primary" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+    </div>
+{% endblock %}
