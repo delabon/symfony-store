@@ -27,7 +27,7 @@ Sell your digital goods and accept payments securely on your site.
 - Nginx
 - Docker
 - Javascript
-- CSS/SASS
+- CSS/SASS/Bootstrap 5.3
 
 ### To test this on your local machine, follow the instructions bellow
 
