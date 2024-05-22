@@ -7,7 +7,7 @@ Sell your digital goods and accept payments securely on your site.
 - Accept Payments (Stripe)
 - Fraud detection (FraudLabs Pro)
 - Cart
-- Invoice
+- Receipt
 - Refund
 - Order management
 - Registration
