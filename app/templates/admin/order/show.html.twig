@@ -18,7 +18,7 @@
                 {% for orderItem in order.items %}
                     <tr>
                         <td>{{ orderItem.name|title }}</td>
-                        <td>{{ (orderItem.price * orderItem.quantity)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                        <td>{{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
                         <td>{{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</td>
                     </tr>
                 {% endfor %}

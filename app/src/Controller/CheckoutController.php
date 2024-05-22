@@ -102,7 +102,7 @@ class CheckoutController extends AbstractController
             $checkoutDetails = CheckoutDetails::createFromArray($data);
             $checkoutDTO = PaidCheckoutDTO::createFromRequest($checkoutDetails, $data);
             $checkoutService->validateForm($checkoutDTO);
-            $fraudDetectionService->validate($checkoutDTO, $total, $cart['quantity'], $cart['currency']);
+            $fraudDetectionService->validate($checkoutDTO, $total, $cart['currency']);
             $pm = $stripeService->createPaymentMethod($checkoutDTO);
             $pi = $stripeService->createPaymentIntent($pm, $money, $this->getParameter('app_currency'), $checkoutDTO->getEmail());
             $csrfToken = $csrfTokenManager->refreshToken('paid_checkout')->getValue();
@@ -189,7 +189,6 @@ class CheckoutController extends AbstractController
                 $orderItem->setName($item['product']->getName())
                     ->setProduct($item['product'])
                     ->setOrder($order)
-                    ->setQuantity($item['quantity'])
                     ->setPrice($item['product']->getSalePrice())
                     ->setCreatedAt(new DateTimeImmutable())
                     ->setUpdatedAt(new DateTimeImmutable());
@@ -264,7 +263,6 @@ class CheckoutController extends AbstractController
                 $orderItem->setName($item['product']->getName())
                     ->setProduct($item['product'])
                     ->setOrder($order)
-                    ->setQuantity($item['quantity'])
                     ->setPrice($item['product']->getSalePrice())
                     ->setCreatedAt(new DateTimeImmutable())
                     ->setUpdatedAt(new DateTimeImmutable());

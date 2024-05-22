@@ -94,34 +94,3 @@ document.addEventListener('click', function(event) {
         });
     }
 });
-
-/**
- * Quantity change
- */
-
-document.addEventListener('input', function(event) {
-    if (event.target.matches('.input-quantity')) {
-        const productId = event.target.dataset.id;
-        const quantity = event.target.value;
-
-        fetch('/cart/update/' + productId + '/' + quantity, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'text/html',
-                'X-CSRF-TOKEN': cartCsrfToken
-            },
-        }).then(function(response) {
-            response.text().then(function(data) {
-                if (!response.ok) {
-                    notify('error', data, 'popup-cart');
-                } else {
-                    document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
-                    notify('success', 'Quantity has been updated', 'popup-cart');
-                    document.querySelector('body').dispatchEvent(new Event('cart-update'));
-                }
-            });
-        }).catch(function(error) {
-            console.log(error);
-        });
-    }
-});

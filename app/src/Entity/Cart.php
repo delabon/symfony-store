@@ -86,42 +86,31 @@ class Cart
 
     public function addItem(int $itemId): self
     {
-        if (!array_key_exists($itemId, $this->items)) {
-            $this->items[$itemId] = 0;
+        if (!in_array($itemId, $this->items)) {
+            $this->items[] = $itemId;
         }
-
-        $this->items[$itemId]++;
 
         return $this;
     }
 
     public function removeItem(int $itemId): self
     {
-        if (!array_key_exists($itemId, $this->items)) {
+        if (!in_array($itemId, $this->items)) {
             throw new OutOfBoundsException('Item not found in cart');
         }
 
-        unset($this->items[$itemId]);
-
-        return $this;
-    }
-
-    public function updateItemQuantity(int $itemId, int $quantity): self
-    {
-        if (!array_key_exists($itemId, $this->items)) {
-            throw new OutOfBoundsException('Item not found in cart');
-        }
-
-        $this->items[$itemId] = $quantity;
+        $this->items = array_filter($this->items, function ($tempId) use ($itemId) {
+            return $itemId !== $tempId;
+        });
 
         return $this;
     }
 
     public function mergeItems(array $newItems): self
     {
-        foreach ($newItems as $itemId => $quantity) {
-            if (!array_key_exists($itemId, $this->items)) {
-                $this->items[$itemId] = $quantity;
+        foreach ($newItems as $itemId) {
+            if (!in_array($itemId, $this->items)) {
+                $this->items[] = $itemId;
             }
         }
 

@@ -19,7 +19,6 @@
 
                     <div class="ms-3">
                         <h5>{{ item.product.name|title }}</h5>
-                        <div>Quantity: {{ item.quantity }}</div>
                         <div>Price: {{ item.product.salePrice|format_currency(app_currency, {rounding_mode: 'floor'}) }}</div>
                     </div>
                 </div>

@@ -37,9 +37,6 @@ class OrderItem
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column]
-    private ?int $quantity = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
@@ -128,18 +125,6 @@ class OrderItem
     public function setOrder(?Order $order): static
     {
         $this->order = $order;
-
-        return $this;
-    }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): static
-    {
-        $this->quantity = $quantity;
 
         return $this;
     }

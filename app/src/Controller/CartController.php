@@ -86,29 +86,4 @@ class CartController extends AbstractController
             return new Response('An error occurred: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    #[Route('/update/{id<\d+>}/{quantity<\d+>}', name: 'update_quantity', methods: ['PATCH'])]
-    public function quantity(Product $product, int $quantity, Request $request): Response
-    {
-        $csrfToken = $request->headers->get('X-CSRF-Token');
-
-        if (!$this->isCsrfTokenValid('cart_csrf_protection', $csrfToken)) {
-            return new Response('Invalid CSRF token', Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $this->cartService->quantity($product, $quantity);
-
-            return $this->render('cart/cart.html.twig', [
-                'product' => $product,
-                'cart' => $this->cartService->get(),
-            ]);
-        } catch (InvalidArgumentException|LogicException $e) {
-            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
-        } catch (OutOfBoundsException $e) {
-            return new Response($e->getMessage(), Response::HTTP_NOT_FOUND);
-        } catch (Exception $e) {
-            return new Response('An error occurred: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 }

@@ -51,10 +51,6 @@ readonly class CartService
             throw new LogicException('Product is not active');
         }
 
-        if ($product->getQuantity() === 0) {
-            throw new ProductOutOfStockException();
-        }
-
         $user = $this->security->getUser();
 
         if ($user instanceof User) {
@@ -78,7 +74,6 @@ readonly class CartService
             $cart->setCreatedAt(new DateTimeImmutable());
         }
 
-        $this->validateQuantityBeforeAdding($product, $cart->getItems()[$product->getId()] ?? 0);
         $cart->setUpdatedAt(new DateTimeImmutable());
         $cart->addItem($product->getId());
         $this->cartRepository->save($cart);
@@ -88,29 +83,11 @@ readonly class CartService
     {
         $cart = $this->requestStack->getSession()->get('cart', []);
 
-        if (!array_key_exists($product->getId(), $cart)) {
-            $cart[$product->getId()] = 0;
+        if (!in_array($product->getId(), $cart)) {
+            $cart[] = $product->getId();
         }
 
-        $this->validateQuantityBeforeAdding($product, $cart[$product->getId()]);
-        $cart[$product->getId()]++;
         $this->requestStack->getSession()->set('cart', $cart);
-    }
-
-    /**
-     * @param Product $product
-     * @param $cart
-     * @return void
-     */
-    private function validateQuantityBeforeAdding(Product $product, $cart): void
-    {
-        if ($product->getQuantity() !== -1) {
-            $cartProductQuantity = $cart;
-
-            if ($cartProductQuantity + 1 > $product->getQuantity()) {
-                throw new InvalidArgumentException('Quantity exceeds available stock');
-            }
-        }
     }
 
     public function get(): array
@@ -127,11 +104,6 @@ readonly class CartService
     public function getTotal(): float
     {
         return $this->get()['total'];
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->get()['quantity'];
     }
 
     public function getItems(): array
@@ -157,7 +129,6 @@ readonly class CartService
             return [
                 'items' => [],
                 'total' => 0,
-                'quantity' => 0,
                 'hash' => '',
                 'currency' => $this->currency
             ];
@@ -177,32 +148,24 @@ readonly class CartService
 
     private function prepareItemsAndTotal(array $cartItems): array
     {
-        $products = $this->productRepository->findBy(['id' => array_keys($cartItems)]);
+        $products = $this->productRepository->findBy(['id' => $cartItems]);
         $items = [];
         $total = 0;
-        $totalQuantity = 0;
 
         foreach ($products as $product) {
             if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
                 continue;
             }
 
-            if ($product->getQuantity() !== -1 && $cartItems[$product->getId()] > $product->getQuantity()) {
-                continue;
-            }
-
             $items[] = [
                 'product' => $product,
-                'quantity' => $cartItems[$product->getId()],
             ];
-            $totalQuantity += $cartItems[$product->getId()];
-            $total += $cartItems[$product->getId()] * StringToFloatUtility::convert($product->getSalePrice());
+            $total += StringToFloatUtility::convert($product->getSalePrice());
         }
 
         return [
             'items' => $items,
             'total' => $total,
-            'quantity' => $totalQuantity,
         ];
     }
 
@@ -234,59 +197,13 @@ readonly class CartService
     {
         $cart = $this->requestStack->getSession()->get('cart', []);
 
-        if (!array_key_exists($product->getId(), $cart)) {
+        if (!in_array($product->getId(), $cart)) {
             throw new OutOfBoundsException('Product not in cart');
         }
 
-        unset($cart[$product->getId()]);
-        $this->requestStack->getSession()->set('cart', $cart);
-    }
-
-    public function quantity(Product $product, int $quantity): void
-    {
-        if ($quantity < 1) {
-            throw new InvalidArgumentException('Quantity must be at least 1');
-        }
-
-        $user = $this->security->getUser();
-
-        if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
-            throw new LogicException('Product is not active');
-        }
-
-        if ($product->getQuantity() !== -1 && $quantity > $product->getQuantity()) {
-            throw new InvalidArgumentException('Quantity exceeds available stock');
-        }
-
-        if ($user instanceof User) {
-            $this->updateDbQuantity($product, $quantity, $user);
-        } else {
-            $this->updateSessionQuantity($product, $quantity);
-        }
-    }
-
-    private function updateDbQuantity(Product $product, int $quantity, User $user): void
-    {
-        $cart = $user->getCart();
-
-        if (!$cart instanceof Cart) {
-            throw new OutOfBoundsException('Cart not found');
-        }
-
-        $cart->updateItemQuantity($product->getId(), $quantity);
-        $cart->setUpdatedAt(new DateTimeImmutable());
-        $this->cartRepository->save($cart);
-    }
-
-    private function updateSessionQuantity(Product $product, int $quantity): void
-    {
-        $cart = $this->requestStack->getSession()->get('cart', []);
-
-        if (!array_key_exists($product->getId(), $cart)) {
-            throw new OutOfBoundsException('Product not in cart');
-        }
-
-        $cart[$product->getId()] = $quantity;
+        $cart = array_filter($cart, function ($itemId) use ($product) {
+            return $itemId !== $product->getId();
+        });
         $this->requestStack->getSession()->set('cart', $cart);
     }
 

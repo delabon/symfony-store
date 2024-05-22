@@ -48,9 +48,6 @@ class ProductType extends AbstractType
             ->add('salePrice', NumberType::class, [
                 'empty_data' => '',
             ])
-            ->add('quantity', NumberType::class, [
-                'empty_data' => '',
-            ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',

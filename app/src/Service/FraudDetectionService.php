@@ -21,7 +21,7 @@ class FraudDetectionService
         $this->validator = new FraudValidation(new Configuration($this->apiKey));
     }
 
-    public function validate(PaidCheckoutDTO $checkoutDTO, float $total, int $quantity, string $currency): void
+    public function validate(PaidCheckoutDTO $checkoutDTO, float $total, string $currency): void
     {
         // Order details
         $orderDetails = [
@@ -30,7 +30,6 @@ class FraudDetectionService
                 // 'note' => 'Online shop',
                 'currency' => strtoupper($currency),
                 'amount' => $total,
-                'quantity' => $quantity,
 
                 // Please refer reference section for full list of payment methods
                 'paymentMethod' => FraudValidation::CREDIT_CARD,

@@ -9,8 +9,6 @@
     {% for item in cart.items %}
         <div class="dropdown-item">
             {{ item.product.name }} <br>
-            Quantity: <input type="number" min="1" value="{{ item.quantity }}" style="width: 50px;" data-id="{{ item.product.id }}" class="input-quantity">
-            <br>
             Price: {{ item.product.salePrice|format_currency(app_currency, {rounding_mode: 'floor'}) }}
             <br>
             <button class="btn btn-danger btn-sm btn-remove-from-cart" data-id="{{ item.product.id }}">Remove</button>

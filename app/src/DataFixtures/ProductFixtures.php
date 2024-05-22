@@ -24,7 +24,6 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $product->setUser($this->getReference('admin'));
             $product->setCategory($this->getReference('category_' . mt_rand(0, 4)));
             $product->setStatus(ProductStatusEnum::toArray()[array_rand(ProductStatusEnum::toArray())]);
-            $product->setQuantity(mt_rand(0, 100));
             $manager->persist($product);
         }
 

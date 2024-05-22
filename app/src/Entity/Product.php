@@ -67,11 +67,6 @@ class Product
     #[Assert\Choice(callback: [ProductStatusEnum::class, 'toArray'])]
     private ProductStatusEnum $status = ProductStatusEnum::DRAFT;
 
-    #[ORM\Column(options: ['default' => 0])]
-    #[Assert\NotBlank]
-    #[Assert\GreaterThanOrEqual(-1)]
-    private int $quantity = 0;
-
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
     private Collection $items;
 
@@ -211,18 +206,6 @@ class Product
     public function setStatus(ProductStatusEnum $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): static
-    {
-        $this->quantity = $quantity;
 
         return $this;
     }
