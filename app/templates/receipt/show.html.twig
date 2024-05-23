@@ -29,7 +29,7 @@
             <strong>Billing address</strong>
             <div>{{ order.firstName|title }} {{ order.lastName|title }}</div>
             <div>{{ order.address }}</div>
-            <div>{{ order.country.value }}, {{ order.city }} {{ order.zipCode }}</div>
+            <div>{{ order.country.label }}, {{ order.city }} {{ order.zipCode }}</div>
         </div>
 
         <table class="table mt-3">
