@@ -32,7 +32,15 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a class="btn btn-sm btn-danger {{ orderItem.isRefunded ? 'disabled' : '' }}" href="{{ path('app_refund_item', {'id': orderItem.id}) }}">Refund Item</a>
+                        {% if orderItem.isRefunded %}
+                            <button class="btn btn-sm btn-danger disabled">Refund Item</button>
+                        {% else %}
+                            <form action="{{ path('app_refund_item', {'id': orderItem.id}) }}" method="post">
+                                <input type="hidden" name="_method" value="PUT">
+                                <input type="hidden" name="_token" value="{{ refundCsrfToken }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Refund Item</button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
@@ -52,7 +60,18 @@
             </tbody>
         </table>
 
-        <a class="btn btn-sm btn-primary" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
-        <a class="btn btn-sm btn-danger btn-full-refund {{ order.status.value|lower == 'refunded' ? 'disabled' : '' }}" href="{{ path('app_refund_full', {'id': order.id}) }}">Full Refund</a>
+        <div class="d-flex align-items-center">
+            <a class="btn btn-sm btn-primary me-1" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+
+            {% if order.status.value|lower == 'refunded' %}
+                <button class="btn btn-sm btn-danger disabled">Full Refund</button>
+            {% else %}
+                <form action="{{ path('app_refund_full', {'id': order.id}) }}" method="post">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="_token" value="{{ refundCsrfToken }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Full Refund</button>
+                </form>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

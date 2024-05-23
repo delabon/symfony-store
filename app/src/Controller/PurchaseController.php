@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
@@ -43,7 +44,8 @@ class PurchaseController extends AbstractController
     #[Route('/{id<\d+>}', name: 'show')]
     public function show(
         Order $order,
-        FileRepository $fileRepository
+        FileRepository $fileRepository,
+        CsrfTokenManagerInterface $csrfTokenManager
     ): Response
     {
         if ($order->getCustomer() != $this->getUser()) {
@@ -68,6 +70,7 @@ class PurchaseController extends AbstractController
         return $this->render('purchase/show.html.twig', [
             'order' => $order,
             'files' => $files,
+            'refundCsrfToken' => $csrfTokenManager->getToken('refund_csrf_protection')->getValue()
         ]);
     }
 }
