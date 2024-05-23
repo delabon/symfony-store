@@ -32,7 +32,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if orderItem.isRefunded %}
+                        {% if orderItem.isRefunded or not canRefund %}
                             <button class="btn btn-sm btn-danger disabled">Refund Item</button>
                         {% else %}
                             <form action="{{ path('app_refund_item', {'id': orderItem.id}) }}" method="post">
@@ -63,7 +63,7 @@
         <div class="d-flex align-items-center">
             <a class="btn btn-sm btn-primary me-1" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
 
-            {% if order.status.value|lower == 'refunded' %}
+            {% if order.status.value|lower == 'refunded' or not canRefund %}
                 <button class="btn btn-sm btn-danger disabled">Full Refund</button>
             {% else %}
                 <form action="{{ path('app_refund_full', {'id': order.id}) }}" method="post">

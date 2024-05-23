@@ -7,6 +7,7 @@ use App\Entity\OrderItem;
 use App\Enum\ProductStatusEnum;
 use App\Repository\FileRepository;
 use App\Repository\OrderRepository;
+use App\Service\StripeService;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +46,8 @@ class PurchaseController extends AbstractController
     public function show(
         Order $order,
         FileRepository $fileRepository,
-        CsrfTokenManagerInterface $csrfTokenManager
+        CsrfTokenManagerInterface $csrfTokenManager,
+        StripeService $stripeService
     ): Response
     {
         if ($order->getCustomer() != $this->getUser()) {
@@ -70,7 +72,8 @@ class PurchaseController extends AbstractController
         return $this->render('purchase/show.html.twig', [
             'order' => $order,
             'files' => $files,
-            'refundCsrfToken' => $csrfTokenManager->getToken('refund_csrf_protection')->getValue()
+            'refundCsrfToken' => $csrfTokenManager->getToken('refund_csrf_protection')->getValue(),
+            'canRefund' => $stripeService->isInRefundPeriod($order, (int)$this->getParameter('app_refund_days')),
         ]);
     }
 }

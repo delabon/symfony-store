@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\ValueObject;
 
 readonly class Money
@@ -12,6 +14,8 @@ readonly class Money
 
     public function toCents(): int
     {
-        return (int)(number_format(str_replace([',', ' '], '', $this->money), 2, '.', '') * 100);
+        $cents = (float)number_format((float)str_replace([',', ' '], '', $this->money), 2, '.', '') * 100;
+
+        return (int)str_replace('.', '', (string)$cents);
     }
 }

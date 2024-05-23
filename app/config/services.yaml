@@ -16,6 +16,7 @@ parameters:
     app_per_page: '%env(APP_PER_PAGE)%'
     app_currency: '%env(APP_CURRENCY)%'
     app_currency_symbol: '%env(APP_CURRENCY_SYMBOL)%'
+    app_refund_days: '%env(APP_REFUND_DAYS)%'
     # Do not include the project directory in the path
     app_uploads_dir: '%env(APP_UPLOADS_DIR)%'
     app_image_sizes:

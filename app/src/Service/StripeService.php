@@ -10,6 +10,7 @@ use App\Repository\OrderItemRepository;
 use App\Repository\OrderRepository;
 use App\Utility\StringToFloatUtility;
 use App\ValueObject\Money;
+use DateTime;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
@@ -28,6 +29,8 @@ class StripeService
     public function __construct(
         #[Autowire('%stripe_secret_key%')]
         private readonly string $stripeSecretKey,
+        #[Autowire('%app_refund_days%')]
+        private readonly string $refundDays,
         private readonly CartService $cartService,
         private readonly OrderRepository $orderRepository,
         private readonly OrderItemRepository $orderItemRepository
@@ -119,10 +122,14 @@ class StripeService
             throw new LogicException('You already refunded this order.');
         }
 
-        $amountToRefund = StringToFloatUtility::convert($order->getTotal());
+        $amountToRefund = StringToFloatUtility::convert($order->getTotal()) - StringToFloatUtility::convert($order->getTotalRefunded());
 
         if ($amountToRefund == 0) {
             throw new LogicException('You cannot refund a free order.');
+        }
+
+        if (!$this->isInRefundPeriod($order, $this->refundDays)) {
+            throw new LogicException('You cannot refund this order. The refund period has expired.');
         }
 
         $paymentMetadata = $order->getPaymentMetadata();
@@ -160,6 +167,10 @@ class StripeService
 
         if ($order->getStatus() === OrderStatusEnum::REFUNDED) {
             throw new LogicException('This order has already been refunded.', Response::HTTP_FORBIDDEN);
+        }
+
+        if (!$this->isInRefundPeriod($order, $this->refundDays)) {
+            throw new LogicException('You cannot refund this item. The refund period has expired.');
         }
 
         $paymentMetadata = $order->getPaymentMetadata();
@@ -219,5 +230,18 @@ class StripeService
         }
 
         return $refund;
+    }
+
+    public function isInRefundPeriod(Order $order, int $refundDays): bool
+    {
+        $now = new DateTime();
+        $refundLastDay = (new DateTime())->setTimestamp($order->getCreatedAt()->getTimestamp());
+        $refundLastDay->modify('+ ' . $refundDays . ' days');
+
+        if ($now > $refundLastDay) {
+            return false;
+        }
+
+        return true;
     }
 }
