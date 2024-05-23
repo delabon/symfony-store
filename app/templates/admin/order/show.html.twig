@@ -35,6 +35,10 @@
                     <td><strong>Total refunded</strong></td>
                     <td>{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
                 </tr>
+                <tr>
+                    <td><strong>Net</strong></td>
+                    <td>{{ (order.total - order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                </tr>
             </tbody>
         </table>
 
