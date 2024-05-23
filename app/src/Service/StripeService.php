@@ -3,12 +3,23 @@
 namespace App\Service;
 
 use App\DTO\PaidCheckoutDTO;
+use App\Entity\Order;
+use App\Entity\OrderItem;
+use App\Enum\OrderStatusEnum;
+use App\Repository\OrderItemRepository;
+use App\Repository\OrderRepository;
+use App\Utility\StringToFloatUtility;
 use App\ValueObject\Money;
+use InvalidArgumentException;
+use LogicException;
+use RuntimeException;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
+use Stripe\Refund;
 use Stripe\StripeClient;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Response;
 
 class StripeService
 {
@@ -17,7 +28,9 @@ class StripeService
     public function __construct(
         #[Autowire('%stripe_secret_key%')]
         private readonly string $stripeSecretKey,
-        private readonly CartService $cartService
+        private readonly CartService $cartService,
+        private readonly OrderRepository $orderRepository,
+        private readonly OrderItemRepository $orderItemRepository
     )
     {
         $this->client = new StripeClient($this->stripeSecretKey);
@@ -95,5 +108,116 @@ class StripeService
     public function getPaymentMethod(string $id): PaymentMethod
     {
         return $this->client->paymentMethods->retrieve($id);
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    public function fullRefund(Order $order): void
+    {
+        if ($order->getStatus() === OrderStatusEnum::REFUNDED) {
+            throw new LogicException('You already refunded this order.');
+        }
+
+        $amountToRefund = StringToFloatUtility::convert($order->getTotal());
+
+        if ($amountToRefund == 0) {
+            throw new LogicException('You cannot refund a free order.');
+        }
+
+        $paymentMetadata = $order->getPaymentMetadata();
+        $this->validatePaymentMethod($paymentMetadata);
+        $this->refund($amountToRefund, $paymentMetadata['payment_intent']);
+
+        $order->setStatus(OrderStatusEnum::REFUNDED);
+        $order->setTotalRefunded($amountToRefund);
+
+        foreach ($order->getItems() as $item) {
+            /** @var OrderItem $item */
+            $item->setRefunded(true);
+            $this->orderItemRepository->save($item);
+        }
+
+        $this->orderRepository->save($order);
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    public function partialRefund(OrderItem $item): void
+    {
+        if ($item->isRefunded()) {
+            throw new LogicException('This item has already been refunded.', Response::HTTP_FORBIDDEN);
+        }
+
+        $amountToRefund = StringToFloatUtility::convert($item->getPrice());
+
+        if ($amountToRefund == 0) {
+            throw new LogicException('You cannot refund free items', Response::HTTP_FORBIDDEN);
+        }
+
+        $order = $item->getOrder();
+
+        if ($order->getStatus() === OrderStatusEnum::REFUNDED) {
+            throw new LogicException('This order has already been refunded.', Response::HTTP_FORBIDDEN);
+        }
+
+        $paymentMetadata = $order->getPaymentMetadata();
+        $this->validatePaymentMethod($paymentMetadata);
+        $this->refund($amountToRefund, $paymentMetadata['payment_intent']);
+
+        $item->setRefunded(true);
+        $this->orderItemRepository->save($item);
+
+        $orderTotal = StringToFloatUtility::convert($order->getTotal());
+        $orderTotalRefunded = StringToFloatUtility::convert($order->getTotalRefunded());
+
+        if ($orderTotalRefunded + $amountToRefund == $orderTotal) {
+            $order->setStatus(OrderStatusEnum::REFUNDED);
+            $order->setTotalRefunded($orderTotal);
+        } else {
+            $order->setStatus(OrderStatusEnum::PARTIAL_REFUNDED);
+            $order->setTotalRefunded($orderTotalRefunded + $amountToRefund);
+        }
+
+        $this->orderRepository->save($order);
+    }
+
+    private function validatePaymentMethod(array $paymentMetadata): void
+    {
+        $gateway = $paymentMetadata['gateway'] ?? null;
+
+        if ($gateway !== 'stripe') {
+            throw new InvalidArgumentException('Invalid gateway.');
+        }
+
+        $pi = $paymentMetadata['payment_intent'] ?? null;
+
+        if (!$pi) {
+            throw new InvalidArgumentException('Invalid Stripe payment intent.');
+        }
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    private function refund(float $amountToRefund, string $pi): Refund
+    {
+        $money = new Money($amountToRefund);
+        $refund = $this->client->refunds->create([
+            'payment_intent' => $pi,
+            'amount' => $money->toCents(),
+            'reason' => 'requested_by_customer',
+        ]);
+
+        if ($refund->status === 'pending' || $refund->status === 'requires_action') {
+            throw new RuntimeException('The refund is pending or requires action.', Response::HTTP_ACCEPTED);
+        } else if ($refund->status === 'failed') {
+            throw new RuntimeException('The refund has failed.', Response::HTTP_PAYMENT_REQUIRED);
+        } else if ($refund->status === 'canceled') {
+            throw new RuntimeException('The refund was canceled.', Response::HTTP_EXPECTATION_FAILED);
+        }
+
+        return $refund;
     }
 }

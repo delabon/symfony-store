@@ -21,28 +21,14 @@ class OrderItemRepository extends ServiceEntityRepository
         parent::__construct($registry, OrderItem::class);
     }
 
-    //    /**
-    //     * @return OrderItem[] Returns an array of OrderItem objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('o.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function save(OrderItem $orderItem): OrderItem
+    {
+        if (!$orderItem->getId()) {
+            $this->getEntityManager()->persist($orderItem);
+        }
 
-    //    public function findOneBySomeField($value): ?OrderItem
-    //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $this->getEntityManager()->flush();
+
+        return $orderItem;
+    }
 }

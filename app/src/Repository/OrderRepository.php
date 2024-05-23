@@ -57,4 +57,15 @@ class OrderRepository extends ServiceEntityRepository
 
         return new Paginator($builder);
     }
+
+    public function save(Order $order): Order
+    {
+        if (!$order->getId()) {
+            $this->getEntityManager()->persist($order);
+        }
+
+        $this->getEntityManager()->flush();
+
+        return $order;
+    }
 }
