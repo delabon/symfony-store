@@ -28,6 +28,10 @@ class FileDownloadController extends AbstractController
             return new Response('You cannot access this order\'s files.', Response::HTTP_FORBIDDEN);
         }
 
+        if ($orderItem->isRefunded()) {
+            return new Response('You cannot download the file because the item is refunded.', Response::HTTP_FORBIDDEN);
+        }
+
         $file = $this->fileRepository->find($fileId);
 
         if (!$file) {
