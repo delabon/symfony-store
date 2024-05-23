@@ -31,11 +31,7 @@ class RefundController extends AbstractController
         }
 
         if ($order->getCustomer() !== $this->getUser()) {
-            $this->addFlash('danger', 'You can only refund your orders.');
-
-            return $this->redirectToRoute('app_purchase_show', [
-                'id' => $order->getId()
-            ]);
+            return new Response('You can only refund your orders.', Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -70,11 +66,7 @@ class RefundController extends AbstractController
         $order = $item->getOrder();
 
         if ($order->getCustomer() !== $this->getUser()) {
-            $this->addFlash('danger', 'You can only refund your order items.');
-
-            return $this->redirectToRoute('app_purchase_show', [
-                'id' => $order->getId()
-            ]);
+            return new Response('You can only refund your order items.', Response::HTTP_FORBIDDEN);
         }
 
         try {
