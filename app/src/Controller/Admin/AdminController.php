@@ -24,12 +24,16 @@ class AdminController extends AbstractController
         OrderRepository $orderRepository
     ): Response
     {
+        $ordersTotals = $orderRepository->getTotals();
+
         return $this->render('admin/index.html.twig', [
             'productsCount' => $productRepository->count(),
             'categoriesCount' => $categoryRepository->count(),
             'usersCount' => $userRepository->count(),
             'pagesCount' => $pageRepository->count(),
             'ordersCount' => $orderRepository->count(),
+            'total' => $ordersTotals['ordersTotal'],
+            'totalRefunds' => $ordersTotals['totalRefunds'],
         ]);
     }
 }

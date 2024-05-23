@@ -68,4 +68,12 @@ class OrderRepository extends ServiceEntityRepository
 
         return $order;
     }
+
+    public function getTotals()
+    {
+        return $this->createQueryBuilder('o')
+            ->select('SUM(o.total) AS ordersTotal, SUM(o.totalRefunded) AS totalRefunds')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

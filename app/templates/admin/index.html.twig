@@ -53,6 +53,9 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Number of orders: {{ ordersCount }}</h5>
+                    <h5 class="card-title">Total: {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
+                    <h5 class="card-title">Total refunds: {{ totalRefunds|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
+                    <h5 class="card-title">Net: {{ (total - totalRefunds)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
                     <a href="{{ path('admin_order_index') }}" class="btn btn-primary btn-sm">Orders</a>
                 </div>
             </div>
