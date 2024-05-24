@@ -3,10 +3,10 @@
 {% block title 'SymfonyStore' %}
 
 {% block body %}
-    <h1 class="h2">Our products</h1>
+    <h1 class="h2">Store</h1>
 
     <div class="row mt-4">
-        <div class="col col-4 d-none d-lg-block">
+        <div class="col col-3 d-none d-lg-block">
             <strong>Filter by category</strong>
 
             <ul class="list-unstyled">
@@ -16,7 +16,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <div class="col col-12 col-lg-8">
+        <div class="col col-12 col-lg-9">
             <div class="row">
                 {% for product in products %}
                     <div class="col col-12 col-sm-6">
