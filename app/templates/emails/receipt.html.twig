@@ -1,0 +1,29 @@
+{# templates/emails/receipt.html.twig #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Receipt</title>
+</head>
+<body>
+    <h1>Thank you for your order!</h1>
+
+    <p>Order Number: {{ order.id }}</p>
+    <p>Date: {{ order.createdAt|date('Y-m-d H:i') }}</p>
+    <p>Name: {{ order.firstName }} {{ order.lastName }}</p>
+
+    <h2>Order Details:</h2>
+    <ul>
+        {% for item in order.items %}
+            <li>
+                {{ item.name }} - {{ item.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p>Total: {{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</p>
+
+    <p>If you have any questions about your order, please contact us.</p>
+</body>
+</html>

@@ -8,6 +8,7 @@ use App\DTO\PaidCheckoutDTO;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Enum\OrderStatusEnum;
+use App\Event\OrderCompletedEvent;
 use App\Exception\FraudLabsProApiException;
 use App\Exception\FraudLabsProRejectException;
 use App\Exception\InvalidCheckoutInputException;
@@ -20,11 +21,13 @@ use App\Service\StripeService;
 use App\Service\ThumbnailService;
 use App\ValueObject\Money;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionException;
 use Stripe\Exception\ApiErrorException;
 use Doctrine\ORM\EntityManagerInterface;
 use CountryEnums\Exceptions\EnumNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,10 +39,16 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/checkout', name: 'app_checkout_')]
 class CheckoutController extends AbstractController
 {
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher
+    )
+    {
+    }
+
     #[Route('', name: 'index')]
     public function index(
         CartService $cartService,
-        ThumbnailService $thumbnailService
+        ThumbnailService $thumbnailService,
     ): Response
     {
         $cart = $cartService->get();
@@ -183,6 +192,7 @@ class CheckoutController extends AbstractController
 
             $entityManager->persist($order);
             $entityManager->flush();
+            $orderItems = [];
 
             foreach ($items as $item) {
                 $orderItem = new OrderItem();
@@ -193,10 +203,14 @@ class CheckoutController extends AbstractController
                     ->setCreatedAt(new DateTimeImmutable())
                     ->setUpdatedAt(new DateTimeImmutable());
                 $entityManager->persist($orderItem);
+                $orderItems[] = $orderItem;
             }
 
+            $order->setItems(new ArrayCollection($orderItems));
             $entityManager->flush();
             $cartService->clear();
+
+            $this->eventDispatcher->dispatch(new OrderCompletedEvent($order), OrderCompletedEvent::NAME);
 
             return $this->json([
                 'uid' => $order->getUniqueId(),
@@ -257,6 +271,7 @@ class CheckoutController extends AbstractController
 
             $entityManager->persist($order);
             $entityManager->flush();
+            $orderItems = [];
 
             foreach ($items as $item) {
                 $orderItem = new OrderItem();
@@ -267,10 +282,14 @@ class CheckoutController extends AbstractController
                     ->setCreatedAt(new DateTimeImmutable())
                     ->setUpdatedAt(new DateTimeImmutable());
                 $entityManager->persist($orderItem);
+                $orderItems[] = $orderItem;
             }
 
+            $order->setItems(new ArrayCollection($orderItems));
             $entityManager->flush();
             $cartService->clear();
+
+            $this->eventDispatcher->dispatch(new OrderCompletedEvent($order), OrderCompletedEvent::NAME);
 
             return $this->json([
                 'uid' => $order->getUniqueId(),
