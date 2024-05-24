@@ -1,0 +1,27 @@
+{# templates/emails/partial_refund.html.twig #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order Partial Refund</title>
+</head>
+<body>
+    <h1>An item in your order has been refunded</h1>
+
+    <p>Order Number: {{ order.id }}</p>
+    <p>Refund Date: {{ "now"|date('Y-m-d H:i') }}</p>
+    <p>Name: {{ order.firstName|title }} {{ order.lastName|title }}</p>
+
+    <h2>Refunded Item:</h2>
+    <ul>
+        <li>
+            {{ orderItem.name }} - {{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+        </li>
+    </ul>
+
+    <p>Refund Amount: {{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</p>
+
+    <p>If you have any questions about your refund, please contact us.</p>
+</body>
+</html>

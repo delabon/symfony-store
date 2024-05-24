@@ -4,12 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Entity\OrderItem;
+use App\Event\OrderItemRefundedEvent;
+use App\Event\OrderRefundedEvent;
 use App\Service\StripeService;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
 use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,6 +22,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/refund', name: 'app_refund_')]
 class RefundController extends AbstractController
 {
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher
+    )
+    {
+    }
+
     #[Route('/full/{id<\d+>}', name: 'full', methods: ['PUT'])]
     public function full(
         Request $request,
@@ -37,6 +46,8 @@ class RefundController extends AbstractController
         try {
             $stripeService->fullRefund($order);
             $this->addFlash('success', 'Your order has been fully refunded.');
+
+            $this->eventDispatcher->dispatch(new OrderRefundedEvent($order), OrderRefundedEvent::NAME);
 
             return $this->redirectToRoute('app_purchase_show', [
                 'id' => $order->getId()
@@ -72,6 +83,12 @@ class RefundController extends AbstractController
         try {
             $stripeService->partialRefund($item);
             $this->addFlash('success', 'Your refund has succeeded.');
+
+            if ($order->getTotal() == $order->getTotalRefunded()) {
+                $this->eventDispatcher->dispatch(new OrderRefundedEvent($order), OrderRefundedEvent::NAME);
+            } else {
+                $this->eventDispatcher->dispatch(new OrderItemRefundedEvent($item), OrderItemRefundedEvent::NAME);
+            }
 
             return $this->redirectToRoute('app_purchase_show', [
                 'id' => $order->getId()

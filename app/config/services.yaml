@@ -53,3 +53,9 @@ services:
     App\EventListener\OrderCompletedListener:
         tags:
             - { name: 'kernel.event_listener', event: 'order.completed' }
+    App\EventListener\OrderRefundedListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'order.refunded' }
+    App\EventListener\OrderItemRefundedListener:
+        tags:
+            - { name: 'kernel.event_listener', event: 'order_item.refunded' }
