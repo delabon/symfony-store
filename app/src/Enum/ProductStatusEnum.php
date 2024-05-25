@@ -14,4 +14,12 @@ enum ProductStatusEnum: string
             self::PUBLISHED,
         ];
     }
+
+    public function toLabel(): string
+    {
+        return match ($this) {
+            ProductStatusEnum::DRAFT => 'Draft',
+            ProductStatusEnum::PUBLISHED => 'Published',
+        };
+    }
 }
