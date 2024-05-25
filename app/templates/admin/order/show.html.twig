@@ -6,12 +6,12 @@
     <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
 
     <div class="mt-5">
-        <table class="table">
+        <table class="table d-none d-lg-table">
             <thead>
                 <tr>
                     <th>Product</th>
-                    <th>Total</th>
-                    <th>Status</th>
+                    <th style="width: 130px">Total</th>
+                    <th style="width: 130px">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,19 +25,42 @@
             </tbody>
         </table>
 
+        <table class="table d-lg-none">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for orderItem in order.items %}
+                <tr>
+                    <td>
+                        <span class="d-block"><strong>Name:</strong> {{ orderItem.name|title }}</span>
+                        <span class="d-block"><strong>Price:</strong> {{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                        <span class="d-block"><strong>Status:</strong> {{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</span>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
         <table class="table">
             <tbody>
                 <tr>
                     <td><strong>Order total</strong></td>
-                    <td>{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    <td style="width: 130px">{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
                 </tr>
                 <tr>
                     <td><strong>Total refunded</strong></td>
-                    <td>{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    <td style="width: 130px">{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
                 </tr>
                 <tr>
                     <td><strong>Net</strong></td>
-                    <td>{{ (order.total - order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    <td style="width: 130px">{{ (order.total - order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date</strong></td>
+                    <td style="width: 130px">{{ order.createdAt|date('F d, Y') }}</td>
                 </tr>
             </tbody>
         </table>
