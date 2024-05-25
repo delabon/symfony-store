@@ -6,14 +6,14 @@
     <h1>Users</h1>
     <p>Manage your users.</p>
 
-    <table class="table">
+    <table class="table d-none d-lg-table">
         <thead>
             <tr>
                 <th>Username</th>
                 <th>Email</th>
                 <th>Date</th>
                 <th>Status</th>
-                <th style="width: 150px">Actions</th>
+                <th style="width: 85px">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,7 +21,7 @@
                 <tr>
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.createdAt|date('Y-m-d') }}</td>
+                    <td>{{ user.createdAt|date('F d, Y') }}</td>
                     <td>{{ user.banned ? 'Banned' : 'Active' }}</td>
                     <td>
                         <div class="d-flex">
@@ -36,6 +36,38 @@
                     </td>
                 </tr>
             {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table d-lg-none">
+        <thead>
+        <tr>
+            <th>User</th>
+            <th style="width: 85px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>
+                    <span class="d-block"><strong>Username:</strong> {{ user.username }}</span>
+                    <span class="d-block"><strong>Email:</strong> {{ user.email }}</span>
+                    <span class="d-block"><strong>Date:</strong> {{ user.createdAt|date('F d, Y') }}</span>
+                    <span class="d-block"><strong>Status:</strong> {{ user.banned ? 'Banned' : 'Active' }}</span>
+                </td>
+                <td>
+                    <div class="d-flex">
+                        {% if not user.isAdmin %}
+                            {% if user.banned %}
+                                <a href="{{ path('admin_user_unban', {id: user.id}) }}" class="btn btn-sm btn-secondary">UnBan</a>
+                            {% else %}
+                                <a href="{{ path('admin_user_ban', {id: user.id}) }}" class="btn btn-sm btn-danger">Ban</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 
