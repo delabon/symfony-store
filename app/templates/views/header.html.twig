@@ -23,9 +23,6 @@
                         <a class="nav-link {{ '/admin/orders' in app.request.uri ? 'active' : '' }}" href="{{ path('admin_order_index') }}">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ '/account' in app.request.uri ? 'active' : '' }}" href="{{ path('app_account') }}">Account</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{{ path('app_home') }}">Back to site</a>
                     </li>
                 </ul>
