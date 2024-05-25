@@ -32,14 +32,9 @@
                             <a href="#" class="text-decoration-underline text-dark">{{ product.name|title }}</a>
                         </h3>
 
-                        {% if product.salePrice and product.salePrice < product.price %}
-                            <del>{{ app_currency_symbol }}{{ product.price }}</del>
-                            <span class="text-danger">
-                                {{ app_currency_symbol }}{{ product.salePrice }}
-                            </span>
-                        {% else %}
-                            <div class="mt-2">{{ app_currency_symbol }}{{ product.price }}</div>
-                        {% endif %}
+                        <div>
+                            {% include 'views/price.html.twig' with {'price': product.Price, 'salePrice': product.salePrice} %}
+                        </div>
 
                         <div class="mt-2 mb-4">
                             <button data-id="{{ product.id }}" class="btn btn-primary btn-sm btn-add-to-cart">Add to cart</button>

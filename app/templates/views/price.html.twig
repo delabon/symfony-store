@@ -1,0 +1,8 @@
+{% if salePrice and salePrice < price %}
+    <del>{{ app_currency_symbol }}{{ price }}</del>
+    <span class="text-danger">
+        {{ app_currency_symbol }}{{ salePrice }}
+    </span>
+{% else %}
+    <span>{{ app_currency_symbol }}{{ price }}</span>
+{% endif %}
