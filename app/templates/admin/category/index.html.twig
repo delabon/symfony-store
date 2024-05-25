@@ -9,19 +9,19 @@
         <a href="{{ path('admin_category_create') }}" class="btn btn-primary">Create new category</a>
     </p>
 
-    <table class="table">
+    <table class="table d-none d-lg-table">
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Date</th>
-                <th style="width: 150px">Actions</th>
+                <th style="width: 200px">Date</th>
+                <th style="width: 130px">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for category in categories %}
                 <tr>
                     <td>{{ category.name|title }}</td>
-                    <td>{{ category.createdAt|date('Y-m-d') }}</td>
+                    <td>{{ category.createdAt|date('F d, Y') }}</td>
                     <td>
                         <div class="d-flex">
                             <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-sm btn-primary">Edit</a>
@@ -33,6 +33,34 @@
                     </td>
                 </tr>
             {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table d-lg-none">
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th style="width: 120px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            <tr>
+                <td>
+                    <span class="d-block"><strong>Name:</strong> {{ category.name|title }}</span>
+                    <span class="d-block"><strong>Date:</strong> {{ category.createdAt|date('F d, Y') }}</span>
+                </td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{{ path('admin_category_edit', {id: category.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="{{ path('admin_category_delete', {id: category.id}) }}" method="post" class="ms-1">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-danger app-delete-confirm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 
