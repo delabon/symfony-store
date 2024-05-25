@@ -9,19 +9,47 @@
         <a href="{{ path('admin_page_create') }}" class="btn btn-primary">Create new page</a>
     </p>
 
-    <table class="table">
+    <table class="table d-none d-lg-table">
         <thead>
         <tr>
             <th>Name</th>
-            <th>Date</th>
-            <th style="width: 150px">Actions</th>
+            <th style="width: 200px">Date</th>
+            <th style="width: 130px">Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for item in pages %}
             <tr>
                 <td>{{ item.name|title }}</td>
-                <td>{{ item.createdAt|date('Y-m-d') }}</td>
+                <td>{{ item.createdAt|date('F d, Y') }}</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{{ path('admin_page_edit', {id: item.id}) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <form action="{{ path('admin_page_delete', {id: item.id}) }}" method="post" class="ms-1">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-sm btn-danger app-delete-confirm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table d-lg-none">
+        <thead>
+        <tr>
+            <th>Page</th>
+            <th style="width: 130px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in pages %}
+            <tr>
+                <td>
+                    <span class="d-block"><strong>Name:</strong> {{ item.name|title }}</span>
+                    <span class="d-block"><strong>Date:</strong> {{ item.createdAt|date('F d, Y') }}</span>
+                </td>
                 <td>
                     <div class="d-flex">
                         <a href="{{ path('admin_page_edit', {id: item.id}) }}" class="btn btn-sm btn-primary">Edit</a>
