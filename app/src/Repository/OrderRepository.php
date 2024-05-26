@@ -55,7 +55,7 @@ class OrderRepository extends ServiceEntityRepository
         $builder->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
 
-        return new Paginator($builder);
+        return new Paginator($builder, fetchJoinCollection: false);
     }
 
     public function save(Order $order): Order
