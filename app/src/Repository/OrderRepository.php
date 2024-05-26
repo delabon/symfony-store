@@ -30,7 +30,8 @@ class OrderRepository extends ServiceEntityRepository
             $this->createQueryBuilder('o')
                 ->orderBy('o.id', 'DESC')
                 ->setFirstResult(($page - 1) * $limit)
-                ->setMaxResults($limit)
+                ->setMaxResults($limit),
+            fetchJoinCollection: false
         );
     }
 
