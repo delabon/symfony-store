@@ -28,7 +28,8 @@ class PageRepository extends ServiceEntityRepository
             $this->createQueryBuilder('p')
                 ->orderBy('p.id', 'DESC')
                 ->setFirstResult(($page - 1) * $limit)
-                ->setMaxResults($limit)
+                ->setMaxResults($limit),
+            fetchJoinCollection: false
         );
     }
 }
