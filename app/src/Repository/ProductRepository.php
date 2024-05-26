@@ -60,7 +60,7 @@ class ProductRepository extends ServiceEntityRepository
                 ->where('p.status = :status')
                 ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
                 ->getQuery(),
-            fetchJoinCollection: false
+            fetchJoinCollection: true
         );
     }
 
