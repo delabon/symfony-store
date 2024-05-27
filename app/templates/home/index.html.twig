@@ -29,7 +29,7 @@
             <div class="row">
                 {% for product in products %}
                     <div class="col col-12 col-sm-6">
-                        <a href="#">
+                        <a href="{{ path('app_product_show', {'slug': product.slug}) }}">
                             {% if product.thumbnailId %}
                                 <img src="{{ thumbnails[product.id] }}" alt="{{ product.name }}" class="img-fluid">
                             {% else %}
@@ -38,7 +38,7 @@
                         </a>
 
                         <h3 class="h5 mt-2">
-                            <a href="#" class="text-decoration-underline text-dark">{{ product.name|title }}</a>
+                            <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="text-decoration-underline text-dark">{{ product.name|title }}</a>
                         </h3>
 
                         <div>
