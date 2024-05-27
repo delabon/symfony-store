@@ -5,8 +5,7 @@ namespace App\Service;
 use App\Entity\Cart;
 use App\Entity\Product;
 use App\Entity\User;
-use App\Enum\ProductStatusEnum;
-use App\Exception\ProductOutOfStockException;
+use App\Enum\EntityStatusEnum;
 use App\Repository\CartRepository;
 use App\Repository\ProductRepository;
 use App\Utility\StringToFloatUtility;
@@ -47,7 +46,7 @@ readonly class CartService
             throw new OutOfBoundsException('Product not found');
         }
 
-        if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
+        if ($product->getStatus() !== EntityStatusEnum::PUBLISHED) {
             throw new LogicException('Product is not active');
         }
 
@@ -153,7 +152,7 @@ readonly class CartService
         $total = 0;
 
         foreach ($products as $product) {
-            if ($product->getStatus() !== ProductStatusEnum::PUBLISHED) {
+            if ($product->getStatus() !== EntityStatusEnum::PUBLISHED) {
                 continue;
             }
 

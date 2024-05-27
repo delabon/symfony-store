@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use App\Entity\Product;
-use App\Enum\ProductStatusEnum;
+use App\Enum\EntityStatusEnum;
 use App\Enum\StoreSortEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -66,7 +66,7 @@ class ProductRepository extends ServiceEntityRepository
         return new Paginator(
             $this->prepareBasicPaginationQuery($page, $limit, $sortEnum)
                 ->where('p.status = :status')
-                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->setParameter('status', EntityStatusEnum::PUBLISHED->value)
                 ->getQuery(),
             fetchJoinCollection: false
         );
@@ -79,7 +79,7 @@ class ProductRepository extends ServiceEntityRepository
                 ->innerJoin('p.category', 'c', 'WITH', 'c.id = :category')
                 ->setParameter('category', $category->getId())
                 ->where('p.status = :status')
-                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->setParameter('status', EntityStatusEnum::PUBLISHED->value)
                 ->getQuery(),
             fetchJoinCollection: true
         );
@@ -92,7 +92,7 @@ class ProductRepository extends ServiceEntityRepository
                 ->where('p.name LIKE :search')
                 ->setParameter('search', '%' . $search . '%')
                 ->andWhere('p.status = :status')
-                ->setParameter('status', ProductStatusEnum::PUBLISHED->value)
+                ->setParameter('status', EntityStatusEnum::PUBLISHED->value)
                 ->getQuery(),
             fetchJoinCollection: false
         );

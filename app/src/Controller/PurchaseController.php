@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Entity\OrderItem;
-use App\Enum\ProductStatusEnum;
+use App\Enum\EntityStatusEnum;
 use App\Repository\FileRepository;
 use App\Repository\OrderRepository;
 use App\Service\StripeService;
@@ -62,7 +62,7 @@ class PurchaseController extends AbstractController
             /** @var $item OrderItem */
             $product = $item->getProduct();
 
-            if ($product && $product->getStatus() === ProductStatusEnum::PUBLISHED && count($product->getFiles())) {
+            if ($product && $product->getStatus() === EntityStatusEnum::PUBLISHED && count($product->getFiles())) {
                 $files[$item->getId()] = $fileRepository->findBy(['id' => $product->getFiles()]);
             } elseif (isset($item->getMetadata()['files']) && is_array($item->getMetadata()['files'])) {
                 $files[$item->getId()] = $fileRepository->findBy(['id' => $item->getMetadata()['files']]);

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\EntityStatusEnum;
 use App\Repository\PageRepository;
 use App\Validator\AllowedSlug;
 use Doctrine\DBAL\Types\Types;
@@ -46,6 +47,9 @@ class Page
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 50, options: ['default' => EntityStatusEnum::DRAFT->value])]
+    private EntityStatusEnum $status = EntityStatusEnum::DRAFT;
 
     public function getId(): ?int
     {
@@ -120,6 +124,18 @@ class Page
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getStatus(): EntityStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(EntityStatusEnum $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

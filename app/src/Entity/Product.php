@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Enum\ProductStatusEnum;
+use App\Enum\EntityStatusEnum;
 use App\Repository\ProductRepository;
 use App\Validator\EitherZeroOrGreaterThanOrEqualToPointFive;
 use Doctrine\Common\Collections\Collection;
@@ -64,8 +64,8 @@ class Product
     private ?int $thumbnailId = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Choice(callback: [ProductStatusEnum::class, 'toArray'])]
-    private ProductStatusEnum $status = ProductStatusEnum::DRAFT;
+    #[Assert\Choice(callback: [EntityStatusEnum::class, 'toArray'])]
+    private EntityStatusEnum $status = EntityStatusEnum::DRAFT;
 
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product')]
     private Collection $items;
@@ -198,12 +198,12 @@ class Product
         return $this;
     }
 
-    public function getStatus(): ProductStatusEnum
+    public function getStatus(): EntityStatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(ProductStatusEnum $status): static
+    public function setStatus(EntityStatusEnum $status): static
     {
         $this->status = $status;
 

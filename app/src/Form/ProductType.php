@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\Product;
-use App\Enum\ProductStatusEnum;
+use App\Enum\EntityStatusEnum;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -53,7 +53,7 @@ class ProductType extends AbstractType
                 'choice_label' => 'name',
             ])
             ->add('status', EnumType::class, [
-                'class' => ProductStatusEnum::class,
+                'class' => EntityStatusEnum::class,
             ])
             ->add('thumbnailFile', FileType::class, [
                 'label' => 'Thumbnail',

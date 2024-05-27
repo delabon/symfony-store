@@ -32,4 +32,14 @@ class PageRepository extends ServiceEntityRepository
             fetchJoinCollection: false
         );
     }
+
+    public function findPublicPages(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'ASC')
+            ->where('p.status = :status')
+            ->setParameter('status', 'public')
+            ->getQuery()
+            ->getResult();
+    }
 }

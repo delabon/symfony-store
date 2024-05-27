@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Page;
+use App\Enum\EntityStatusEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,6 +33,9 @@ class PageType extends AbstractType
             ])
             ->add('content', TextareaType::class, [
                 'empty_data' => '',
+            ])
+            ->add('status', EnumType::class, [
+                'class' => EntityStatusEnum::class
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Save',

@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum ProductStatusEnum: string
+enum EntityStatusEnum: string
 {
     case DRAFT = 'draft';
     case PUBLISHED = 'published';
@@ -18,8 +18,8 @@ enum ProductStatusEnum: string
     public function toLabel(): string
     {
         return match ($this) {
-            ProductStatusEnum::DRAFT => 'Draft',
-            ProductStatusEnum::PUBLISHED => 'Published',
+            EntityStatusEnum::DRAFT => 'Draft',
+            EntityStatusEnum::PUBLISHED => 'Published',
         };
     }
 }

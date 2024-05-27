@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
-use App\Enum\ProductStatusEnum;
+use App\Enum\EntityStatusEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -23,7 +23,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $product->setUpdatedAt(new \DateTimeImmutable());
             $product->setUser($this->getReference('admin'));
             $product->setCategory($this->getReference('category_' . mt_rand(0, 4)));
-            $product->setStatus(ProductStatusEnum::toArray()[array_rand(ProductStatusEnum::toArray())]);
+            $product->setStatus(EntityStatusEnum::toArray()[array_rand(EntityStatusEnum::toArray())]);
             $manager->persist($product);
         }
 
