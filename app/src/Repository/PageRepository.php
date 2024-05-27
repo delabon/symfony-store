@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Page;
+use App\Enum\EntityStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -38,7 +39,7 @@ class PageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->orderBy('p.id', 'ASC')
             ->where('p.status = :status')
-            ->setParameter('status', 'public')
+            ->setParameter('status', EntityStatusEnum::PUBLISHED->value)
             ->getQuery()
             ->getResult();
     }

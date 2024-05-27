@@ -1,5 +1,15 @@
 <footer class="bg-dark text-center text-white">
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
-        {{ "now"|date("Y") }} © {{ app_name }} - <a href="{{ path('app_contact_index') }}" class="text-white">Contact</a>
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-center pt-3 flex-wrap">
+            {% for page in twigPages.findPublicPages() %}
+                <a href="{{ path('app_page_show', { 'slug': page.slug }) }}" class="text-white mx-1">{{ page.name }}</a>
+            {% endfor %}
+
+            <a href="{{ path('app_contact_index') }}" class="text-white mx-1">Contact</a>
+        </div>
+
+        <div class="text-center p-3">
+            {{ "now"|date("Y") }} © {{ app_name }}
+        </div>
     </div>
 </footer>
