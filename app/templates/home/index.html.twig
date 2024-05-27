@@ -17,6 +17,15 @@
             </ul>
         </div>
         <div class="col col-12 col-lg-9">
+            <div class="d-flex align-items-center justify-content-end mb-3 pe-1">
+                <span class="d-inline-flex me-2">Sort</span>
+                <select class="form-select form-select-sm w-auto" id="store-sort">
+                    {% for sortItem in sortItems %}
+                        <option value="{{ sortItem.value }}" {{ app.request.query.get('sort', 'newest') == sortItem.value ? 'selected="selected"' : '' }}>{{ sortItem.toLabel }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="row">
                 {% for product in products %}
                     <div class="col col-12 col-sm-6">

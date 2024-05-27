@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Enum\StoreSortEnum;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Service\ThumbnailService;
@@ -20,6 +21,7 @@ class HomeController extends AbstractController
         ThumbnailService $thumbnailService
     ): Response
     {
+        $sortEnum = StoreSortEnum::getByValue($request->query->get('sort', 'newest'));
         $page = $request->query->getInt('page', 1);
         $limit = (int)$this->getParameter('app_per_page');
         $search = $request->query->get('s');
@@ -28,16 +30,16 @@ class HomeController extends AbstractController
         $thumbnails = [];
 
         if (!empty($search)) {
-            $paginator = $productRepository->paginatePublishedBySearch($search, $page, $limit);
+            $paginator = $productRepository->paginatePublishedBySearch($search, $page, $limit, $sortEnum);
         } else {
             if ($categorySlug) {
                 $category = $categoryRepository->findOneBy(['slug' => $categorySlug]);
             }
 
             if ($category) {
-                $paginator = $productRepository->paginatePublishedByCategory($category, $page, $limit);
+                $paginator = $productRepository->paginatePublishedByCategory($category, $page, $limit, $sortEnum);
             } else {
-                $paginator = $productRepository->paginatePublished($page, $limit);
+                $paginator = $productRepository->paginatePublished($page, $limit, $sortEnum);
             }
         }
 
@@ -50,7 +52,8 @@ class HomeController extends AbstractController
             'page' => $page,
             'maxPages' => ceil($paginator->count() / $limit),
             'thumbnails' => $thumbnails,
-            'categories' => $categoryRepository->nonEmptyCategories()
+            'categories' => $categoryRepository->nonEmptyCategories(),
+            'sortItems' => StoreSortEnum::toArray()
         ]);
     }
 }
