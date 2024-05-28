@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-gd": "*",
         "ext-iconv": "*",
+        "ext-fileinfo": "*",
         "bradietilley/country-enums": "^1.5",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.12",

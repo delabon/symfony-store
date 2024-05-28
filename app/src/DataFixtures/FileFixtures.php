@@ -3,17 +3,20 @@
 namespace App\DataFixtures;
 
 use App\Abstract\AbstractFixture;
-use App\Entity\File;
-use DateTimeImmutable;
+use App\Repository\FileRepository;
+use App\Service\ThumbnailService;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileFixtures extends AbstractFixture implements DependentFixtureInterface
 {
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
+        private readonly ThumbnailService $thumbnailService,
+        private readonly FileRepository $fileRepository,
         private string $uploadsDir = ''
     )
     {
@@ -27,22 +30,18 @@ class FileFixtures extends AbstractFixture implements DependentFixtureInterface
         $this->deleteOldFiles();
 
         for ($i = 0; $i < 30; $i++) {
-            $image = $this->faker->image(dir: $this->uploadsDir, width: 1000);
+            $image = $this->faker->image(dir: '/tmp', width: 1000);
 
             if (!$image) {
                 continue;
             }
 
-            $file = new File();
-            $file->setUser($this->getReference('admin'));
-            $file->setName(basename($image));
-            $file->setUpdatedAt(new DateTimeImmutable());
-            $file->setCreatedAt(new DateTimeImmutable());
-            $manager->persist($file);
+            $mime = mime_content_type($image);
+            $uploadedFile = new UploadedFile(path: $image, originalName: basename($image), mimeType: $mime, test: true);
+            $fileId = $this->thumbnailService->upload($uploadedFile, $this->getReference('admin'));
+            $file = $this->fileRepository->find($fileId);
             $this->setReference('image_' . $i, $file);
         }
-
-        $manager->flush();
     }
 
     public function getDependencies(): array

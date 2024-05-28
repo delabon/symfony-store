@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\File;
+use App\Entity\User;
 use App\Repository\FileRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -48,7 +49,7 @@ class ThumbnailService
     /**
      * @throws FileException
      */
-    public function upload(UploadedFile $file): int
+    public function upload(UploadedFile $file, ?User $user = null): int
     {
         $filename = hash('md5', $file->getClientOriginalName() . '-' . uniqid()) . '.' . $file->getClientOriginalExtension();
 
@@ -59,7 +60,7 @@ class ThumbnailService
             );
             $sizes = $this->imageCroppingService->createSizes($filename, $this->uploadsDir);
 
-            return $this->fileRepository->saveFile($filename, $this->security->getUser(), $sizes);
+            return $this->fileRepository->saveFile($filename, $user ?: $this->security->getUser(), $sizes);
         } catch (FileException $e) {
             throw new FileException('An error occurred while uploading the file: ' . $e->getMessage());
         }
