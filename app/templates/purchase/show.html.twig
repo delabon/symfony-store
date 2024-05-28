@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title 'SymfonyStore - Order' %}
+{% block title %}Order details - {{ app_name }}{% endblock %}
 
 {% block body %}
     <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
