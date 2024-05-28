@@ -74,11 +74,11 @@ class ProductController extends AbstractController
 
                 return $this->redirectToRoute('admin_product_index');
             } catch (FileException $e) {
-                $this->addFlash('error', 'Could not upload the files: ' . $e->getMessage());
+                $this->addFlash('danger', 'Could not upload the files: ' . $e->getMessage());
 
                 return $this->redirectToRoute('admin_product_create');
             } catch (InvalidArgumentException $e) {
-                $this->addFlash('error', 'Please upload at least one file.');
+                $this->addFlash('danger', 'Please upload at least one file.');
 
                 return $this->redirectToRoute('admin_product_create');
             }
@@ -123,11 +123,11 @@ class ProductController extends AbstractController
 
                 return $this->redirectToRoute('admin_product_index');
             } catch (FileException $e) {
-                $this->addFlash('error', 'Could not upload the files: ' . $e->getMessage());
+                $this->addFlash('danger', 'Could not upload the files: ' . $e->getMessage());
 
                 return $this->redirectToRoute('admin_product_edit', ['id' => $product->getId()]);
             } catch (InvalidArgumentException $e) {
-                $this->addFlash('error', 'Please upload at least one file.');
+                $this->addFlash('danger', 'Please upload at least one file.');
 
                 return $this->redirectToRoute('admin_product_edit', ['id' => $product->getId()]);
             }
@@ -179,7 +179,7 @@ class ProductController extends AbstractController
                 $product->setThumbnailId($thumbnailId);
                 $this->entityManager->flush();
             } catch (Exception $e) {
-                $this->addFlash('error', 'Could not upload the thumbnail.');
+                $this->addFlash('danger', 'Could not upload the thumbnail.');
             }
         }
     }
@@ -196,7 +196,7 @@ class ProductController extends AbstractController
 
                 return $fileIds;
             } catch (Exception $e) {
-                $this->addFlash('error', 'Could not upload the files: ' . $e->getMessage());
+                $this->addFlash('danger', 'Could not upload the files: ' . $e->getMessage());
             }
         }
 
