@@ -7,12 +7,12 @@
 
     <div class="row mt-4">
         <div class="col col-3 d-none d-lg-block">
-            <strong>Filter by category</strong>
+            <strong class="h5">Filter by category</strong>
 
             <ul class="list-unstyled">
-                <li><a href="{{ path('app_home') }}" class="text-dark {{ app.request.query.has('category') ? 'text-decoration-none' : 'text-decoration-underline' }}">All</a></li>
+                <li><a href="{{ path('app_home') }}" class="text-dark {{ app.request.query.has('category') ? 'text-decoration-none' : 'text-decoration-underline fw-bold text-dark' }}">All</a></li>
                 {% for category in categories %}
-                    <li><a href="{{ path('app_home', {'category': category.slug}) }}" class="text-dark {{ app.request.query.get('category') == category.slug ? 'text-decoration-underline' : 'text-decoration-none' }}">{{ category.name }}</a></li>
+                    <li><a href="{{ path('app_home', {'category': category.slug}) }}" class="text-dark {{ app.request.query.get('category') == category.slug ? 'text-decoration-underline fw-bold text-dark' : 'text-decoration-none' }}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
