@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Abstract\AbstractFixture;
 use App\Entity\File;
+use DateTimeImmutable;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
@@ -23,6 +24,8 @@ class FileFixtures extends AbstractFixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        $this->deleteOldFiles();
+
         for ($i = 0; $i < 30; $i++) {
             $image = $this->faker->image(dir: $this->uploadsDir, width: 1000);
 
@@ -33,8 +36,8 @@ class FileFixtures extends AbstractFixture implements DependentFixtureInterface
             $file = new File();
             $file->setUser($this->getReference('admin'));
             $file->setName(basename($image));
-            $file->setUpdatedAt(new \DateTimeImmutable());
-            $file->setCreatedAt(new \DateTimeImmutable());
+            $file->setUpdatedAt(new DateTimeImmutable());
+            $file->setCreatedAt(new DateTimeImmutable());
             $manager->persist($file);
             $this->setReference('image_' . $i, $file);
         }
@@ -47,5 +50,20 @@ class FileFixtures extends AbstractFixture implements DependentFixtureInterface
         return [
             UserFixtures::class
         ];
+    }
+
+    private function deleteOldFiles(): void
+    {
+        $files = scandir($this->uploadsDir);
+
+        foreach ($files as $filename) {
+            $filepath = $this->uploadsDir . $filename;
+
+            if (!is_file($filepath)) {
+                continue;
+            }
+
+            unlink($filepath);
+        }
     }
 }
