@@ -35,6 +35,11 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
             $product->setUser($this->getReference('admin'));
             $product->setCategory($this->getReference('category_' . mt_rand(0, 4)));
             $product->setStatus(EntityStatusEnum::toArray()[array_rand(EntityStatusEnum::toArray())]);
+
+            if ($this->getReference('image_' . $i)) {
+                $product->setThumbnailId($this->getReference('image_' . $i)->getId());
+            }
+
             $manager->persist($product);
         }
 
@@ -46,6 +51,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
         return [
             UserFixtures::class,
             CategoryFixtures::class,
+            FileFixtures::class
         ];
     }
 }
