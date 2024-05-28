@@ -4,11 +4,13 @@
 
 const $sort = document.querySelector('#store-sort');
 
-$sort.addEventListener('change', function (event) {
-    const sort = this.value;
-    const urlParts = location.href.split('?');
-    const query = new URLSearchParams(urlParts[1]);
+if ($sort) {
+    $sort.addEventListener('change', function (event) {
+        const sort = this.value;
+        const urlParts = location.href.split('?');
+        const query = new URLSearchParams(urlParts[1]);
 
-    query.set('sort', sort);
-    location.href = urlParts[0] + '?' + query.toString();
-});
+        query.set('sort', sort);
+        location.href = urlParts[0] + '?' + query.toString();
+    });
+}
