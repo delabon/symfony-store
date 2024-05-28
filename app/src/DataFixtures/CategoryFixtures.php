@@ -14,7 +14,7 @@ class CategoryFixtures extends AbstractFixture implements DependentFixtureInterf
         for ($i = 0; $i < 45; $i++) {
             $category = new Category();
             $category->setUser($this->getReference('admin'));
-            $category->setName($this->faker->sentence(rand(2, 4)));
+            $category->setName($this->faker->sentence(rand(2, 3)));
             $category->setSlug("category-{$i}");
             $category->setCreatedAt(new \DateTimeImmutable());
             $category->setUpdatedAt(new \DateTimeImmutable());
