@@ -2,25 +2,21 @@
 
 namespace App\DataFixtures;
 
+use App\Abstract\AbstractFixture;
 use App\Entity\File;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
-use Faker\Generator;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class FileFixtures extends Fixture implements DependentFixtureInterface
+class FileFixtures extends AbstractFixture implements DependentFixtureInterface
 {
-    private Generator $faker;
-
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
         private string $uploadsDir = ''
     )
     {
-        $this->faker = Factory::create();
+        parent::__construct();
         $this->faker->addProvider(new FakerPicsumImagesProvider($this->faker));
         $this->uploadsDir = $this->parameterBag->get('kernel.project_dir') . '/' . trim($this->parameterBag->get('app_uploads_dir'), '/') . '/';
     }
