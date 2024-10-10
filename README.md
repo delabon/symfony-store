@@ -33,28 +33,10 @@ Sell your digital goods and accept payments securely on your site.
 
 ### To test this on your local machine, follow the instructions bellow
 
-#### Add domain to /etc/hosts (host)
-
-```bash
-sudo vi /etc/hosts
-127.0.0.111  symfony-store.test
-```
-
-#### Install mkcert (host)
-
-```bash
-sudo apt install libnss3-tools
-curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-chmod +x mkcert-v*-linux-amd64
-sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
-cd ssls/
-mkcert -install symfony-store.test
-```
-
 #### Up containers (host)
 
 ```bash
-docker-compose up --build -d
+docker compose up -d
 ```
 
 #### create .env.local inside the app directory
@@ -62,32 +44,33 @@ docker-compose up --build -d
 Copy the content of .env file and paste it in .env.local and then, Add the following
 
 ```dotenv
+cp app/.env app/.env.local
 DATABASE_URL="mysql://root:root@mysql-service:3306/my_store?serverVersion=8.3.0&charset=utf8mb4"
 MAILER_DSN=smtp://mailpit:1025
 ```
 
-#### Connect to the php container
+#### create uploads folder inside app/public
 
-```bash
-docker exec -it php-container bash
+```dotenv
+mkdir app/public/uploads
 ```
 
-#### Composer
+#### Install composer packages
 
 ```bash
-composer install
+docker compose exec php-service composer install
 ```
 
 #### Migrate database
 
 ```bash
-php bin/console doctrine:migrations:migrate
+docker compose exec php-service php bin/console doctrine:migrations:migrate
 ```
 
 #### Load fixtures
 
 ```bash
-php bin/console doctrine:fixtures:load -n
+docker compose exec php-service php bin/console doctrine:fixtures:load -n
 ```
 
 #### Install node modules
@@ -95,13 +78,13 @@ php bin/console doctrine:fixtures:load -n
 Open a new terminal and run the following command
 
 ```bash
-docker-compose run node-service npm install
-docker-compose run node-service npm run build
+docker compose run --rm node-service npm install
+docker compose run --rm node-service npm run build
 ```
 
 #### Bowser
 
-Now, open https://symfony-store.test in your browser
+Now, open http://localhost:8011 in your browser
 
 #### Mailpit
 
