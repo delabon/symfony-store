@@ -1,4 +1,4 @@
-## About
+## SymfonyStore
 
 Sell your digital goods and accept payments securely on your site.
 
