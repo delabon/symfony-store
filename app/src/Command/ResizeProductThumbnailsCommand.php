@@ -70,7 +70,6 @@ class ResizeProductThumbnailsCommand extends Command
                 continue;
             }
 
-            $ext = pathinfo($file->getName(), PATHINFO_EXTENSION);
             $this->deleteFileSizes($file);
 
             try {
