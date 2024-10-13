@@ -15,7 +15,7 @@ class ProductController extends AbstractController
     {
         return $this->render('product/show.html.twig', [
             'product' => $product,
-            'thumbnail' => $product->getThumbnailId() ? $thumbnailService->getUrl($product->getThumbnailId(), 500, 500) : null,
+            'thumbnail' => $product->getThumbnailId() ? $thumbnailService->getUrl($product->getThumbnailId()) : null,
         ]);
     }
 }
