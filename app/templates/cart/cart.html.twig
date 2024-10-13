@@ -1,22 +1,32 @@
-{% if cart.items is empty %}
-    <div class="dropdown-item">
-        <strong>Cart is empty</strong>
-    </div>
-{% else %}
-    <div class="dropdown-item">
-        <strong>Cart</strong>
-    </div>
-    {% for item in cart.items %}
-        <div class="dropdown-item">
-            {{ item.product.name }} <br>
-            Price: {{ item.product.salePrice|format_currency(app_currency, {rounding_mode: 'floor'}) }}
-            <br>
-            <button class="btn btn-danger btn-sm btn-remove-from-cart" data-id="{{ item.product.id }}">Remove</button>
-        </div>
-    {% endfor %}
-    <div class="dropdown-divider"></div>
-    <div class="dropdown-item">
+<div class="cart-shadow"></div>
+<div class="cart-wrapper">
+    <header>
+        <strong>Shopping Cart</strong>
+        <button class="app-cart-close-btn">X</button>
+    </header>
+
+    <main>
+        {% if cart.items is empty %}
+            <p>
+                <strong>Cart is empty</strong>
+            </p>
+        {% else %}
+            <ul class="cart-items">
+                {% for item in cart.items %}
+                    <li class="dropdown-item">
+                        {{ item.product.name }}
+                        <br>
+                        Price: {{ item.product.salePrice|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+                        <br>
+                        <button class="btn btn-danger btn-sm btn-remove-from-cart" data-id="{{ item.product.id }}">Remove</button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </main>
+
+    <footer>
         <strong>Total: {{ app_currency_symbol }}{{ cart.total }}</strong>
         <a href="{{ path('app_checkout_index') }}" class="btn btn-success">Checkout</a>
-    </div>
-{% endif %}
+    </footer>
+</div>

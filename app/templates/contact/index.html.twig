@@ -3,8 +3,12 @@
 {% block title %}Contact - {{ app_name }}{% endblock %}
 
 {% block body %}
-    <h1>Contact</h1>
-    <p>Feel free to contact us.</p>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Contact</h1>
+        <p>Feel free to contact us.</p>
 
-    {{ form(form) }}
+        {{ form(form) }}
+    </div>
+</div>
 {% endblock %}

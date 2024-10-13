@@ -17,18 +17,20 @@
     <body>
         {% include 'views/header.html.twig' %}
 
-        <div class="container">
-            <div class="p-4 my-4 bg-white">
-                {% for type, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ type }}">{{ message }}</div>
+        {% if app.flashes %}
+            <div class="container">
+                <div class="p-4 my-4 bg-white">
+                    {% for type, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type }}">{{ message }}</div>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-
-                {% block body %}
-                {% endblock %}
+                </div>
             </div>
-        </div>
+        {% endif %}
+
+        {% block body %}
+        {% endblock %}
 
         {% include 'views/footer.html.twig' %}
 

@@ -3,63 +3,66 @@
 {% block title %}Admin{% endblock %}
 
 {% block body %}
-    <h1>Admin</h1>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Admin</h1>
 
-    <div class="row">
-        <div class="col col-12 col-lg-4 mt-2 mt-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Number of products: {{ productsCount }}</h5>
-                    <a href="{{ path('admin_product_index') }}" class="btn btn-primary btn-sm">Products</a>
-                    <a href="{{ path('admin_product_create') }}" class="btn btn-primary btn-sm">Create new product</a>
+        <div class="row">
+            <div class="col col-12 col-lg-4 mt-2 mt-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of products: {{ productsCount }}</h5>
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-primary btn-sm">Products</a>
+                        <a href="{{ path('admin_product_create') }}" class="btn btn-primary btn-sm">Create new product</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col col-12 col-lg-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of categories: {{ categoriesCount }}</h5>
+                        <a href="{{ path('admin_category_index') }}" class="btn btn-primary btn-sm">Categories</a>
+                        <a href="{{ path('admin_category_create') }}" class="btn btn-primary btn-sm">Create new category</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col col-12 col-lg-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of users: {{ usersCount }}</h5>
+                        <div class="card-text">
+                            <a href="{{ path('admin_user_index') }}" class="btn btn-primary btn-sm">Users</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col col-12 col-lg-4 mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Number of categories: {{ categoriesCount }}</h5>
-                    <a href="{{ path('admin_category_index') }}" class="btn btn-primary btn-sm">Categories</a>
-                    <a href="{{ path('admin_category_create') }}" class="btn btn-primary btn-sm">Create new category</a>
+        <div class="row">
+            <div class="col col-12 col-lg-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of pages: {{ pagesCount }}</h5>
+                        <a href="{{ path('admin_page_index') }}" class="btn btn-primary btn-sm">Pages</a>
+                        <a href="{{ path('admin_page_create') }}" class="btn btn-primary btn-sm">Create new page</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col col-12 col-lg-4 mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Number of users: {{ usersCount }}</h5>
-                    <div class="card-text">
-                        <a href="{{ path('admin_user_index') }}" class="btn btn-primary btn-sm">Users</a>
+            <div class="col col-12 col-lg-4 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of orders: {{ ordersCount }}</h5>
+                        <h5 class="card-title">Total: {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
+                        <h5 class="card-title">Total refunds: {{ totalRefunds|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
+                        <h5 class="card-title">Net: {{ (total - totalRefunds)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
+                        <a href="{{ path('admin_order_index') }}" class="btn btn-primary btn-sm">Orders</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col col-12 col-lg-4 mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Number of pages: {{ pagesCount }}</h5>
-                    <a href="{{ path('admin_page_index') }}" class="btn btn-primary btn-sm">Pages</a>
-                    <a href="{{ path('admin_page_create') }}" class="btn btn-primary btn-sm">Create new page</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col col-12 col-lg-4 mt-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Number of orders: {{ ordersCount }}</h5>
-                    <h5 class="card-title">Total: {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
-                    <h5 class="card-title">Total refunds: {{ totalRefunds|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
-                    <h5 class="card-title">Net: {{ (total - totalRefunds)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</h5>
-                    <a href="{{ path('admin_order_index') }}" class="btn btn-primary btn-sm">Orders</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+</div>
 {% endblock %}

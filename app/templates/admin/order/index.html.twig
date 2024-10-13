@@ -3,79 +3,82 @@
 {% block title %}Admin - Orders{% endblock %}
 
 {% block body %}
-    <h1>Orders</h1>
-    <p>Manage your orders.</p>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Orders</h1>
+        <p>Manage your orders.</p>
 
-    <table class="table d-none d-lg-table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Customer</th>
-            <th>Total</th>
-            <th>Total Refunded</th>
-            <th>Date</th>
-            <th style="width: 85px">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for order in orders %}
+        <table class="table d-none d-lg-table">
+            <thead>
             <tr>
-                <td>{{ order.id }}</td>
-                <td>{{ order.status.toLabel }}</td>
-                <td>
-                    ID: {{ order.customer.id }}
-                    <br>
-                    Name: {{ order.firstName|title }} {{ order.lastName|title }}
-                    <br>
-                    Email: {{ order.email }}
-                </td>
-                <td>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                <td>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-
-                <td>{{ order.createdAt|date('F d, Y') }}</td>
-                <td>
-                    <div class="d-flex">
-                        <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-primary">View</a>
-                    </div>
-                </td>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Total Refunded</th>
+                <th>Date</th>
+                <th style="width: 85px">Actions</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.status.toLabel }}</td>
+                    <td>
+                        ID: {{ order.customer.id }}
+                        <br>
+                        Name: {{ order.firstName|title }} {{ order.lastName|title }}
+                        <br>
+                        Email: {{ order.email }}
+                    </td>
+                    <td>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    <td>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
 
-    <table class="table d-lg-none">
-        <thead>
-        <tr>
-            <th>Order</th>
-            <th style="width: 85px">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for order in orders %}
+                    <td>{{ order.createdAt|date('F d, Y') }}</td>
+                    <td>
+                        <div class="d-flex">
+                            <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-primary">View</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table d-lg-none">
+            <thead>
             <tr>
-                <td>
-                    <span class="d-block"><strong>ID:</strong> {{ order.id }}</span>
-                    <span class="d-block"><strong>Status:</strong> {{ order.status.toLabel }}</span>
-                    <span class="d-block"><strong>Date:</strong> {{ order.createdAt|date('F d, Y') }}</span>
-                    <span class="d-block"><strong>Total:</strong> {{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
-                    <span class="d-block"><strong>Total refund:</strong> {{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
-                    <span class="d-block"><strong>Customer:</strong>
-                        <span class="ms-3 d-block"><strong>ID:</strong> {{ order.customer.id }}</span>
-                        <span class="ms-3 d-block"><strong>Name:</strong> {{ order.firstName|title }} {{ order.lastName|title }}</span>
-                        <span class="ms-3 d-block"><strong>Email:</strong> {{ order.email }}</span>
-                    </span>
-                </td>
-                <td>
-                    <div class="d-flex">
-                        <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-primary">View</a>
-                    </div>
-                </td>
+                <th>Order</th>
+                <th style="width: 85px">Actions</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>
+                        <span class="d-block"><strong>ID:</strong> {{ order.id }}</span>
+                        <span class="d-block"><strong>Status:</strong> {{ order.status.toLabel }}</span>
+                        <span class="d-block"><strong>Date:</strong> {{ order.createdAt|date('F d, Y') }}</span>
+                        <span class="d-block"><strong>Total:</strong> {{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                        <span class="d-block"><strong>Total refund:</strong> {{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                        <span class="d-block"><strong>Customer:</strong>
+                            <span class="ms-3 d-block"><strong>ID:</strong> {{ order.customer.id }}</span>
+                            <span class="ms-3 d-block"><strong>Name:</strong> {{ order.firstName|title }} {{ order.lastName|title }}</span>
+                            <span class="ms-3 d-block"><strong>Email:</strong> {{ order.email }}</span>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex">
+                            <a href="{{ path('admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-primary">View</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-    {% include 'views/pagination.html.twig' with {'route': 'admin_order_index', 'maxPages': maxPages, 'page': page} %}
-
+        {% include 'views/pagination.html.twig' with {'route': 'admin_order_index', 'maxPages': maxPages, 'page': page} %}
+    </div>
+</div>
 {% endblock %}

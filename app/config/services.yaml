@@ -6,6 +6,7 @@
 parameters:
     app_domain: '%env(APP_DOMAIN)%'
     app_name: '%env(APP_NAME)%'
+    app_logo: '%env(APP_LOGO)%'
     app_description: '%env(APP_DESCRIPTION)%'
     app_version: '%env(APP_VERSION)%'
     app_support_email: '%env(APP_SUPPORT_EMAIL)%'

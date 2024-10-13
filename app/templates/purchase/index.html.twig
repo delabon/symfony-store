@@ -3,56 +3,60 @@
 {% block title %}Purchases - {{ app_name }}{% endblock %}
 
 {% block body %}
-    <h1 class="text-center">Purchases</h1>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1 class="text-center">Purchases</h1>
 
-    <table class="table mt-4 d-none d-lg-table">
-        <thead>
+        <table class="table mt-4 d-none d-lg-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Total Refunded</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.status.toLabel }}</td>
+                        <td>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                        <td>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                        <td style="width: 100px">
+                            <a class="btn btn-primary btn-sm" href="{{ path('app_purchase_show', {'id': order.id}) }}">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+
+        <table class="table mt-4 d-lg-none">
+            <thead>
             <tr>
-                <th>ID</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Total Refunded</th>
+                <th>Order</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for order in orders %}
                 <tr>
-                    <td>{{ order.id }}</td>
-                    <td>{{ order.status.toLabel }}</td>
-                    <td>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                    <td>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                    <td style="width: 100px">
+                    <td>
+                        <span class="d-block"><strong>ID:</strong> {{ order.id }}</span>
+                        <span class="d-block"><strong>Status:</strong> {{ order.status.toLabel }}</span>
+                        <span class="d-block"><strong>Total:</strong>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                        <span class="d-block"><strong>Total refund:</strong>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                    </td>
+                    <td style="width: 90px">
                         <a class="btn btn-primary btn-sm" href="{{ path('app_purchase_show', {'id': order.id}) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
-    </table>
+        </table>
 
-    <table class="table mt-4 d-lg-none">
-        <thead>
-        <tr>
-            <th>Order</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for order in orders %}
-            <tr>
-                <td>
-                    <span class="d-block"><strong>ID:</strong> {{ order.id }}</span>
-                    <span class="d-block"><strong>Status:</strong> {{ order.status.toLabel }}</span>
-                    <span class="d-block"><strong>Total:</strong>{{ order.total|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
-                    <span class="d-block"><strong>Total refund:</strong>{{ order.totalRefunded|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
-                </td>
-                <td style="width: 90px">
-                    <a class="btn btn-primary btn-sm" href="{{ path('app_purchase_show', {'id': order.id}) }}">View</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    {% include 'views/pagination.html.twig' with {'route': 'app_purchase_index', 'maxPages': maxPages, 'page': page} %}
+        {% include 'views/pagination.html.twig' with {'route': 'app_purchase_index', 'maxPages': maxPages, 'page': page} %}
+    </div>
+</div>
 {% endblock %}

@@ -3,18 +3,25 @@
 {% block title %}{{ product.name }} - {{ app_name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ product.name }}</h1>
+    <div class="container">
+        <div class="p-4 my-4 bg-white shadow rounded">
+            <h1>{{ product.name }}</h1>
 
-    {% if thumbnail %}
-        <p>
-            <img src="{{ thumbnail }}" alt="{{ product.name }}" class="img-fluid">
-        </p>
-    {% endif %}
+            <div class="position-relative">
+                {% if product.thumbnailId %}
+                    <img src="{{ thumbnail }}" alt="{{ product.name }}" class="img-fluid rounded w-100">
+                {% else %}
+                    <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ product.name }}" class="img-fluid rounded w-100">
+                {% endif %}
 
-    <p>Price: {% include 'views/price.html.twig' with {'price': product.Price, 'salePrice': product.salePrice} %}</p>
+                <button data-id="{{ product.id }}" class="btn-add-to-cart" title="Add to cart">
+                    <img src="{{ asset('assets/img/cart.svg') }}" alt="Add to cart">
+                </button>
+            </div>
 
-    <p>{{ product.description|nl2br }}</p>
-    <p>
-        <button data-id="{{ product.id }}" class="btn btn-primary btn-sm btn-add-to-cart">Add to cart</button>
-    </p>
+            <p>Price: {% include 'views/price.html.twig' with {'price': product.Price, 'salePrice': product.salePrice} %}</p>
+
+            <p>{{ product.description|nl2br }}</p>
+        </div>
+    </div>
 {% endblock %}

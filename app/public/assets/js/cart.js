@@ -1,11 +1,18 @@
 import { notify } from "./global.js";
 
 /**
- * Load cart template when page is loaded
+ * Update cart count
+ */
+function updateCartCount () {
+    document.querySelector('.app-cart-btn span').innerHTML = document.querySelectorAll('.cart-items .dropdown-item').length;
+}
+
+/**
+ * Load cart count when page is loaded
  */
 
 window.addEventListener('load', () => {
-    if (!document.querySelector('.nav-item-cart')) {
+    if (!document.querySelector('.app-cart-btn')) {
         return;
     }
 
@@ -20,7 +27,8 @@ window.addEventListener('load', () => {
             if (!response.ok) {
                 notify('error', data, 'popup-cart');
             } else {
-                document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
+                document.querySelector('body').insertAdjacentHTML('beforeend', data);
+                updateCartCount();
             }
         });
     }).catch(function(error) {
@@ -35,8 +43,15 @@ window.addEventListener('load', () => {
 document.querySelectorAll('.btn-add-to-cart').forEach((button) => {
     button.addEventListener('click', (event) => {
         event.preventDefault();
+        event.stopPropagation();
 
-        const productId = event.target.dataset.id;
+        let target = event.target;
+
+        if (target.tagName.toLowerCase() === 'img') {
+            target = target.parentElement;
+        }
+
+        const productId = target.dataset.id;
 
         fetch('/cart/add/' + productId, {
             method: 'POST',
@@ -49,10 +64,16 @@ document.querySelectorAll('.btn-add-to-cart').forEach((button) => {
                 if (!response.ok) {
                     notify('error', data, 'popup-cart');
                 } else {
-                    document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
                     notify('success', 'Product has been added to cart', 'popup-cart');
-                    document.querySelector('.app-main-header .nav-item-cart .nav-link').dispatchEvent(new Event('click'));
                     document.querySelector('body').dispatchEvent(new Event('cart-update'));
+
+                    if (document.querySelector('.cart-shadow')) {
+                        document.querySelector('.cart-shadow').remove();
+                        document.querySelector('.cart-wrapper').remove();
+                    }
+
+                    document.querySelector('body').insertAdjacentHTML('beforeend', data);
+                    updateCartCount();
                 }
             });
         }).catch(function(error) {
@@ -67,7 +88,7 @@ document.querySelectorAll('.btn-add-to-cart').forEach((button) => {
 
 document.addEventListener('click', function(event) {
     // Check if the clicked element matches your selector
-    if (event.target.matches('.dropdown-menu .btn-remove-from-cart')) {
+    if (event.target.matches('.btn-remove-from-cart')) {
         event.preventDefault();
 
         const productId = event.target.dataset.id;
@@ -83,14 +104,42 @@ document.addEventListener('click', function(event) {
                 if (!response.ok) {
                     notify('error', data, 'popup-cart');
                 } else {
-                    document.querySelector('.app-main-header .nav-item-cart .dropdown-menu').innerHTML = data;
                     notify('success', 'Product has been deleted from cart', 'popup-cart');
-                    document.querySelector('.app-main-header .nav-item-cart .nav-link').dispatchEvent(new Event('click'));
                     document.querySelector('body').dispatchEvent(new Event('cart-update'));
+
+                    if (document.querySelector('.cart-shadow')) {
+                        document.querySelector('.cart-shadow').remove();
+                        document.querySelector('.cart-wrapper').remove();
+                    }
+
+                    document.querySelector('body').insertAdjacentHTML('beforeend', data);
+                    updateCartCount();
                 }
             });
         }).catch(function(error) {
             console.log(error);
         });
+    }
+});
+
+/**
+ * Open cart
+ */
+
+document.querySelector('.app-cart-btn').addEventListener('click', (event) => {
+    event.preventDefault();
+
+    document.querySelector('body').classList.add('show-cart');
+});
+
+
+/**
+ * Close cart
+ */
+
+document.addEventListener('click', (event) => {
+    if (event.target.classList.contains('app-cart-close-btn')) {
+        event.preventDefault();
+        document.querySelector('body').classList.remove('show-cart');
     }
 });

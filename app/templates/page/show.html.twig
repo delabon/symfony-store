@@ -3,11 +3,15 @@
 {% block title %}{{ page.name|title }} - {{ app_name }}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
 
-    <h1>{{ page.name|title }}</h1>
+        <h1>{{ page.name|title }}</h1>
 
-    <p>{{ page.content|nl2br }}</p>
+        <p>{{ page.content|nl2br }}</p>
+    </div>
+</div>
 {% endblock %}

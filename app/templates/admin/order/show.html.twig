@@ -3,68 +3,72 @@
 {% block title %}Admin - Order #{{ order.id }}{% endblock %}
 
 {% block body %}
-    <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Order #{{ order.id }} - {{ order.status.toLabel }}</h1>
 
-    <div class="mt-5">
-        <table class="table d-none d-lg-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th style="width: 130px">Total</th>
-                    <th style="width: 130px">Status</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="mt-5">
+            <table class="table d-none d-lg-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th style="width: 130px">Total</th>
+                        <th style="width: 130px">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orderItem in order.items %}
+                        <tr>
+                            <td>{{ orderItem.name|title }}</td>
+                            <td>{{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                            <td>{{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <table class="table d-lg-none">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for orderItem in order.items %}
                     <tr>
-                        <td>{{ orderItem.name|title }}</td>
-                        <td>{{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                        <td>{{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</td>
+                        <td>
+                            <span class="d-block"><strong>Name:</strong> {{ orderItem.name|title }}</span>
+                            <span class="d-block"><strong>Price:</strong> {{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
+                            <span class="d-block"><strong>Status:</strong> {{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</span>
+                        </td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
-        <table class="table d-lg-none">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for orderItem in order.items %}
-                <tr>
-                    <td>
-                        <span class="d-block"><strong>Name:</strong> {{ orderItem.name|title }}</span>
-                        <span class="d-block"><strong>Price:</strong> {{ orderItem.price|format_currency(app_currency, {rounding_mode: 'floor'}) }}</span>
-                        <span class="d-block"><strong>Status:</strong> {{ orderItem.isRefunded ? 'Refunded' : 'Completed' }}</span>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><strong>Order total</strong></td>
+                        <td style="width: 130px">{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total refunded</strong></td>
+                        <td style="width: 130px">{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Net</strong></td>
+                        <td style="width: 130px">{{ (order.total - order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td style="width: 130px">{{ order.createdAt|date('F d, Y') }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td><strong>Order total</strong></td>
-                    <td style="width: 130px">{{ (order.total)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Total refunded</strong></td>
-                    <td style="width: 130px">{{ (order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Net</strong></td>
-                    <td style="width: 130px">{{ (order.total - order.totalRefunded)|format_currency(app_currency, {rounding_mode: 'floor'}) }}</td>
-                </tr>
-                <tr>
-                    <td><strong>Date</strong></td>
-                    <td style="width: 130px">{{ order.createdAt|date('F d, Y') }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <a class="btn btn-sm btn-primary" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+            <a class="btn btn-sm btn-primary" href="{{ path('app_receipt_show', {uid: order.uniqueId}) }}">Receipt</a>
+        </div>
     </div>
+</div>
 {% endblock %}

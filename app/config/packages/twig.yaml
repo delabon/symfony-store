@@ -2,6 +2,7 @@ twig:
     file_name_pattern: '*.twig'
     globals:
         app_name: '%app_name%'
+        app_logo: '%app_logo%'
         app_description: '%app_description%'
         app_version: '%app_version%'
         app_currency: '%app_currency%'

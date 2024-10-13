@@ -3,18 +3,22 @@
 {% block title %}Admin - Products{% endblock %}
 
 {% block body %}
-    <h1>Create new product</h1>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Create new product</h1>
 
-    {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.slug) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.salePrice) }}
-        {{ form_row(form.category) }}
-        {{ form_row(form.status) }}
-        {{ form_row(form.thumbnailFile) }}
-        {{ form_row(form.productFiles) }}
-        {{ form_row(form.save) }}
-    {{ form_end(form) }}
+        {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.slug) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.price) }}
+            {{ form_row(form.salePrice) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.status) }}
+            {{ form_row(form.thumbnailFile) }}
+            {{ form_row(form.productFiles) }}
+            {{ form_row(form.save) }}
+        {{ form_end(form) }}
+    </div>
+</div>
 {% endblock %}

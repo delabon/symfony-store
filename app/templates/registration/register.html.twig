@@ -3,13 +3,17 @@
 {% block title %}Register - {{ app_name }}{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
 
-    <h1>Register</h1>
+        <h1>Register</h1>
 
-    {{ form_errors(registrationForm) }}
+        {{ form_errors(registrationForm) }}
 
-    {{ form(registrationForm) }}
+        {{ form(registrationForm) }}
+    </div>
+</div>
 {% endblock %}

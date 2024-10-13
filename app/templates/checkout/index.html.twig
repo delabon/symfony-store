@@ -3,58 +3,62 @@
 {% block title %}Checkout - {{ app_name }}{% endblock %}
 
 {% block body %}
-    <h1>Checkout</h1>
+<div class="container">
+    <div class="p-4 my-4 bg-white shadow rounded">
+        <h1>Checkout</h1>
 
-    <div class="row mt-3">
-        <div class="col col-12 col-lg-8 order-2 order-lg-1">
-            <h3>Items</h3>
+        <div class="row mt-3">
+            <div class="col col-12 col-lg-8 order-2 order-lg-1">
+                <h3>Items</h3>
 
-            {% for item in items %}
-                <div class="d-flex align-items-start border-bottom border-dark-subtle pb-3 mb-3">
-                    {% if item.product.thumbnailId %}
-                        <img src="{{ thumbnails[item.product.id] }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
-                    {% else %}
-                        <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
-                    {% endif %}
+                {% for item in items %}
+                    <div class="d-flex align-items-start border-bottom border-dark-subtle pb-3 mb-3">
+                        {% if item.product.thumbnailId %}
+                            <img src="{{ thumbnails[item.product.id] }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
+                        {% else %}
+                            <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ item.product.name }}" class="rounded" style="max-width: 54px; height: auto;">
+                        {% endif %}
 
-                    <div class="ms-3">
-                        <h5>{{ item.product.name|title }}</h5>
-                        <div>Price: {% include 'views/price.html.twig' with {'price': item.product.Price, 'salePrice': item.product.salePrice} %}</div>
+                        <div class="ms-3">
+                            <h5>{{ item.product.name|title }}</h5>
+                            <div>Price: {% include 'views/price.html.twig' with {'price': item.product.Price, 'salePrice': item.product.salePrice} %}</div>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
 
-            <div>
-                <strong>Total:</strong> {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+                <div>
+                    <strong>Total:</strong> {{ total|format_currency(app_currency, {rounding_mode: 'floor'}) }}
+                </div>
+            </div>
+
+            <div class="col col-12 col-lg-4 order-1 order-lg-2">
+                <h3>Checkout details</h3>
+                {{ form_start(form, {'attr': {'id': 'checkout_form'}}) }}
+
+                {{ form_row(form._token, {'attr': {'class': 'checkout-token'}}) }}
+
+                {{ form_row(form.checkoutDetails.firstName) }}
+                {{ form_row(form.checkoutDetails.lastName) }}
+                {{ form_row(form.checkoutDetails.email) }}
+                {{ form_row(form.checkoutDetails.address) }}
+                {{ form_row(form.checkoutDetails.country) }}
+                {{ form_row(form.checkoutDetails.city) }}
+                {{ form_row(form.checkoutDetails.zipCode) }}
+
+                {% if total > 0 %}
+                    {{ form_row(form.ccNumber) }}
+                    {{ form_row(form.ccDate) }}
+                    {{ form_row(form.ccCvc) }}
+                    {{ form_row(form.checkoutDetails.save) }}
+                {% else %}
+                    {{ form_row(form.checkoutDetails.save, {'label': 'Complete order'}) }}
+                {% endif %}
+
+                {{ form_end(form, {render_rest: false}) }}
             </div>
         </div>
-
-        <div class="col col-12 col-lg-4 order-1 order-lg-2">
-            <h3>Checkout details</h3>
-            {{ form_start(form, {'attr': {'id': 'checkout_form'}}) }}
-
-            {{ form_row(form._token, {'attr': {'class': 'checkout-token'}}) }}
-
-            {{ form_row(form.checkoutDetails.firstName) }}
-            {{ form_row(form.checkoutDetails.lastName) }}
-            {{ form_row(form.checkoutDetails.email) }}
-            {{ form_row(form.checkoutDetails.address) }}
-            {{ form_row(form.checkoutDetails.country) }}
-            {{ form_row(form.checkoutDetails.city) }}
-            {{ form_row(form.checkoutDetails.zipCode) }}
-
-            {% if total > 0 %}
-                {{ form_row(form.ccNumber) }}
-                {{ form_row(form.ccDate) }}
-                {{ form_row(form.ccCvc) }}
-                {{ form_row(form.checkoutDetails.save) }}
-            {% else %}
-                {{ form_row(form.checkoutDetails.save, {'label': 'Complete order'}) }}
-            {% endif %}
-
-            {{ form_end(form, {render_rest: false}) }}
-        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

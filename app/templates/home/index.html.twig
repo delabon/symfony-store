@@ -3,51 +3,91 @@
 {% block title %}{{ app_name }}{% endblock %}
 
 {% block body %}
-    <h1 class="h2">Store</h1>
-
-    <div class="row mt-4">
-        <div class="col col-3 d-none d-lg-block">
-            <strong class="h5">Filter by category</strong>
-
-            <ul class="list-unstyled">
-                <li><a href="{{ path('app_home') }}" class="text-dark {{ app.request.query.has('category') ? 'text-decoration-none' : 'text-decoration-underline fw-bold text-dark' }}">All</a></li>
-                {% for category in categories %}
-                    <li><a href="{{ path('app_home', {'category': category.slug}) }}" class="text-dark {{ app.request.query.get('category') == category.slug ? 'text-decoration-underline fw-bold text-dark' : 'text-decoration-none' }}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ul>
+    <div class="app-home-hero" style="background-image: url('{{ asset('assets/img/hero.jpg') }}')">
+        <div class="container">
+            <h2>The best household electronics are here!</h2>
         </div>
-        <div class="col col-12 col-lg-9">
-            <div class="d-flex align-items-center justify-content-end mb-3 pe-1">
-                <span class="d-inline-flex me-2">Sort</span>
-                <select class="form-select form-select-sm w-auto" id="store-sort">
-                    {% for sortItem in sortItems %}
-                        <option value="{{ sortItem.value }}" {{ app.request.query.get('sort', 'newest') == sortItem.value ? 'selected="selected"' : '' }}>{{ sortItem.toLabel }}</option>
-                    {% endfor %}
-                </select>
+    </div>
+    <div class="container">
+        <div class="row mx-0 p-4 bg-white mt-4 shadow rounded">
+            <div class="col col-12 col-md-6 col-xl-3 mb-3 mb-xl-0 d-inline-flex align-items-center">
+                <img src="{{ asset('assets/img/truck.svg') }}" alt="Shipping">
+                <div class="d-inline-flex flex-column ms-3">
+                    <strong>Free shipping</strong>
+                    <span>When you spend $100 or more</span>
+                </div>
             </div>
 
-            <div class="row">
+            <div class="col col-12 col-md-6 col-xl-3 mb-3 mb-xl-0 d-inline-flex align-items-center">
+                <img src="{{ asset('assets/img/bubble.svg') }}" alt="Support">
+                <div class="d-inline-flex flex-column ms-3">
+                    <strong>24/7 Support</strong>
+                    <span>Need help? contact us anytime</span>
+                </div>
+            </div>
+
+            <div class="col col-12 col-md-6 col-xl-3 mb-3 mb-xl-0 d-inline-flex align-items-center">
+                <img src="{{ asset('assets/img/undo.svg') }}" alt="Return">
+                <div class="d-inline-flex flex-column ms-3">
+                    <strong>Satisfied or return</strong>
+                    <span>60-day return policy</span>
+                </div>
+            </div>
+
+            <div class="col col-12 col-md-6 col-xl-3 d-inline-flex align-items-center">
+                <img src="{{ asset('assets/img/credit-card.svg') }}" alt="Payments">
+                <div class="d-inline-flex flex-column ms-3">
+                    <strong>100% secure payments</strong>
+                    <span>We use Stripe</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 my-4 bg-white shadow rounded">
+            <div class="d-flex align-items-center justify-content-start flex-wrap">
+                <div class="d-flex align-items-center justify-content-end mb-3 pe-1 me-2">
+                    <span class="d-inline-flex me-2">Category</span>
+                    <select class="form-select form-select-sm w-auto" id="store-category" style="max-width: 150px">
+                        <option value="{{ path('app_home') }}" {{ app.request.query.has('category') ? '' : 'selected="selected"' }}>All</option>
+
+                        {% for category in categories %}
+                            <option value="{{ category.slug }}" {{ app.request.query.get('category') == category.slug ? 'selected="selected"' : '' }}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-end mb-3 pe-1">
+                    <span class="d-inline-flex me-2">Sort</span>
+                    <select class="form-select form-select-sm w-auto" id="store-sort" style="max-width: 150px">
+                        {% for sortItem in sortItems %}
+                            <option value="{{ sortItem.value }}" {{ app.request.query.get('sort', 'newest') == sortItem.value ? 'selected="selected"' : '' }}>{{ sortItem.toLabel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
                 {% for product in products %}
-                    <div class="col col-12 col-sm-6">
+                    <div class="col col-12 col-md-6 col-lg-4 col-xl-3 mb-3 position-relative">
                         <a href="{{ path('app_product_show', {'slug': product.slug}) }}">
                             {% if product.thumbnailId %}
-                                <img src="{{ thumbnails[product.id] }}" alt="{{ product.name }}" class="img-fluid">
+                                <img src="{{ thumbnails[product.id] }}" alt="{{ product.name }}" class="img-fluid rounded">
                             {% else %}
-                                <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ product.name }}" class="img-fluid">
+                                <img src="{{ asset('assets/img/no-image-gray.jpg') }}" alt="{{ product.name }}" class="img-fluid rounded">
                             {% endif %}
                         </a>
 
-                        <h3 class="h5 mt-2">
-                            <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="text-decoration-underline text-dark">{{ product.name|title }}</a>
+                        <h3 class="h6 mt-2">
+                            <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark">{{ product.name|title }}</a>
                         </h3>
 
                         <div>
-                            {% include 'views/price.html.twig' with {'price': product.Price, 'salePrice': product.salePrice} %}
+                            <small>{% include 'views/price.html.twig' with {'price': product.Price, 'salePrice': product.salePrice} %}</small>
                         </div>
 
-                        <div class="mt-2 mb-4">
-                            <button data-id="{{ product.id }}" class="btn btn-primary btn-sm btn-add-to-cart">Add to cart</button>
-                        </div>
+                        <button data-id="{{ product.id }}" class="btn-add-to-cart" title="Add to cart">
+                            <img src="{{ asset('assets/img/cart.svg') }}" alt="Add to cart">
+                        </button>
                     </div>
                 {% endfor %}
             </div>
@@ -57,5 +97,6 @@
                     {% include 'views/pagination.html.twig' with {'route': 'app_home', 'maxPages': maxPages, 'page': page} %}
                 </div>
             {% endif %}
+        </div>
     </div>
 {% endblock %}
