@@ -44,7 +44,7 @@ class ImageCroppingService
         // Calculate aspect ratio
         $aspectRatio = $origWidth / $origHeight;
 
-        // Calculate new dimensions
+        // Calculate new dimensions to fit within the given width and height
         if ($width / $height > $aspectRatio) {
             $newWidth = (int)($height * $aspectRatio);
             $newHeight = $height;
@@ -53,19 +53,31 @@ class ImageCroppingService
             $newHeight = (int)($width / $aspectRatio);
         }
 
+        // Resize the image
         $resizedImage = imagescale($origImage, $newWidth, $newHeight);
 
         if ($resizedImage === false) {
             throw new RuntimeException('Could not resize image');
         }
 
+        // Calculate cropping coordinates to crop from the center
+        $cropX = max(0, ($newWidth - $width) / 2);
+        $cropY = max(0, ($newHeight - $height) / 2);
+
+        // Crop the image
+        $croppedImage = imagecrop($resizedImage, ['x' => $cropX, 'y' => $cropY, 'width' => $width, 'height' => $height]);
+
+        if ($croppedImage === false) {
+            throw new RuntimeException('Could not crop image');
+        }
+
         $resizedFilename = pathinfo($filename, PATHINFO_FILENAME) . '-' . $width . 'x' . $height . '.' . pathinfo($path, PATHINFO_EXTENSION);
-        imagejpeg($resizedImage, $baseDir . $resizedFilename);
+        imagejpeg($croppedImage, $baseDir . $resizedFilename);
 
         return [
             'path' => $resizedFilename,
-            'width' => $newWidth,
-            'height' => $newHeight
+            'width' => $width,
+            'height' => $height
         ];
     }
 
