@@ -25,13 +25,48 @@ class ImageCroppingService
 
         foreach ($this->sizes as $size) {
             try {
-                $result[] = $this->crop($filename, $baseDir, $size['width'], $size['height']);
+                $result[] = $this->resize($filename, $baseDir, $size['width'], $size['height']);
             } catch (Exception) {
                 continue;
             }
         }
 
         return $result;
+    }
+
+    private function resize(string $filename, string $baseDir, int $width, int $height): array
+    {
+        $path = $baseDir . $filename;
+        $origImage = imagecreatefromjpeg($path);
+        $origWidth = imagesx($origImage);
+        $origHeight = imagesy($origImage);
+
+        // Calculate aspect ratio
+        $aspectRatio = $origWidth / $origHeight;
+
+        // Calculate new dimensions
+        if ($width / $height > $aspectRatio) {
+            $newWidth = (int)($height * $aspectRatio);
+            $newHeight = $height;
+        } else {
+            $newWidth = $width;
+            $newHeight = (int)($width / $aspectRatio);
+        }
+
+        $resizedImage = imagescale($origImage, $newWidth, $newHeight);
+
+        if ($resizedImage === false) {
+            throw new RuntimeException('Could not resize image');
+        }
+
+        $resizedFilename = pathinfo($filename, PATHINFO_FILENAME) . '-' . $width . 'x' . $height . '.' . pathinfo($path, PATHINFO_EXTENSION);
+        imagejpeg($resizedImage, $baseDir . $resizedFilename);
+
+        return [
+            'path' => $resizedFilename,
+            'width' => $newWidth,
+            'height' => $newHeight
+        ];
     }
 
     private function crop(string $filename, string $baseDir, int $width, int $height): array
