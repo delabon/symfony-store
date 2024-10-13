@@ -39,6 +39,12 @@ class FileRepository extends ServiceEntityRepository
         return $file->getId();
     }
 
+    public function updateSizes(File $file, array $sizes): void
+    {
+        $file->setSizes($sizes);
+        $this->getEntityManager()->flush();
+    }
+
     public function removeFile(File $file): void
     {
         $this->getEntityManager()->remove($file);
