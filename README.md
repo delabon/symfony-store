@@ -2,8 +2,6 @@
 
 Sell your digital goods and accept payments securely on your site.
 
-[Limited demo](https://symfony-store.delabon.com/)
-
 ### Key features
 
 - Accept Payments (Stripe)
